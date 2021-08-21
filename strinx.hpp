@@ -111,7 +111,7 @@ public:
 			_it = _size - (_it + v - _size);
 		return false;
 	};
-	bool moveline() {
+	/*bool moveline() {
 		if (canmove()) {
 			move();
 			while (true) {
@@ -124,7 +124,7 @@ public:
 		}
 		else
 			return false;
-	}
+	}*/
 	bool operator++() { return move(); };
 	bool operator--() { return moveback(); };
 	const char* c_str() { return _str; };
