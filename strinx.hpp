@@ -10,6 +10,7 @@ private:
 	std::string stx(int v) { std::stringstream ss; ss << v; return ss.str(); };
 	std::string stx(char v) { std::stringstream ss; ss << v; return ss.str(); };
 	std::string stx(const char* v) { std::stringstream ss; ss << v; return ss.str(); };
+public:
 	class Split {
 	private:
 		std::vector<char> _ss;
@@ -38,16 +39,29 @@ private:
 					};
 			return false;
 		};
-		char* chars() {
-			char* _t = new char[_ss.size()];
-			for (volatile size_t i = 0; i < _ss.size(); i++)
-				_t[i] = _ss[i];
-			return _t;
+		bool operator-=(char v) { return del(v); };
+		bool operator+=(char v) {
+			if (_is_in(v))
+				return false;
+			else {
+				_ss.push_back(v);
+				return true;
+			};
 		};
+		char& operator[](size_t v) { return _ss[v]; };
+		void print() { for (volatile size_t i = 0; i < _ss.size(); i++) { std::cout << _ss[i]; }; };
 		size_t size() { return _ss.size(); };
 		size_t lenght() { return _ss.size(); };
 	};
-public:
+	enum PrintType {
+		All,
+		Char,
+		Line,
+		Word,
+		Reverse,
+		Upper,
+		Lower
+	};
 	size_t size() { return _size; };
 	size_t lenght() { return _size; };
 	size_t len() { return _size; };
@@ -56,25 +70,24 @@ public:
 	char& first() { return _str[0]; };
 	char& last() { return _str[_size - 1]; };
 	char& middle() { return _str[_size / 2]; };
+	void print(PrintType v = PrintType::All);
 	Split split;
 	size_t& iterator() { return _it; };
 	void reset() { _it = 0; };
-	bool canmove() { return _it == _size - 1 ? false : true; };
+	bool canmove() { return _it >= _size ? false : true; };
 	bool canmoveback() { return _it == 0 ? false : true; };
-	/*bool canmoveline() {
+	bool canmoveline() {
 		if (canmove()) {
-			size_t _i = _it;
-			while (true) {
-				if (_str[_i] == '\n')
-					return true;
-				if (!canmove())
+			for (volatile size_t _i = _it; ; _i++) {
+				if (_i >= _size)
 					return false;
-				_i++;
+				if (_str[_i] == '\n' || _i == _size - 1)
+					return true;
 			};
 		}
 		else
 			return false;
-	}*/
+	}
 	bool move() {
 		if (_it < _size) {
 			_it++;
@@ -149,21 +162,32 @@ public:
 				_t += _str[i];
 		return _t;
 	};
-	void clear() { _str = new char[1]{ '\0' }; _size = 0; };
+	void clear() { _str = (char*)'\0'; _size = 0; };
+	void resize(size_t v, char c = ' ') {
+		if (v < _size) {
+			strinx _c = *this;
+			*this = _c(0, v);
+			_size = v;
+		}
+		else {
+			strinx _c = *this;
+			*this = _c(0, _size) + _c(_size, v);
+			_size = v;
+		};
+	};
 
 	void operator=(char v) { _str = new char[2]{ v, '\0' }; _size = 1; };
-	void operator=(std::string& v) { _str = strcat(_strdup(v.c_str()), "\0"); _size = v.size(); };
-	void operator=(int v) { _str = strcat(_strdup(stx(v).c_str()), "\0"); _size = strlen(_str); };
-	void operator=(double v) { _str = strcat(_strdup(stx(v).c_str()), "\0"); _size = strlen(_str); };
-	void operator=(float v) { _str = strcat(_strdup(stx(v).c_str()), "\0"); _size = strlen(_str); };
+	void operator=(const char* v) { _str = _strdup(v); _size = strlen(v); };
+	void operator=(std::string v) { _str = _strdup(v.c_str()); _size = v.size(); };
+	void operator=(int v) { _str = _strdup(stx(v).c_str()); _size = strlen(_str); };
+	void operator=(float v) { _str = _strdup(stx(v).c_str()); _size = strlen(_str); };
 
-	void operator+=(const char* v) { _str = strcat(strcat(_str, v), "\0"); _size += strlen(v); };
-	void operator+=(char v) { _str = strcat(_str, new char[2]{ v, '\0' }); _size++; };
-	void operator+=(std::string v) { _str = strcat(_str, v.c_str()); _size += v.size(); };
-	void operator+=(strinx v) { _str = strcat(_str, v.c_str()); _size += v.size(); };
-	void operator+=(int v) { _str = strcat(strcat(_str, _strdup(stx(v).c_str())), "\0"); _size += stx(v).size(); };
-	void operator+=(float v) { _str = strcat(strcat(_str, _strdup(stx(v).c_str())), "\0"); _size += stx(v).size(); };
-	void operator+=(double v) { _str = strcat(strcat(_str, _strdup(stx(v).c_str())), "\0"); _size += stx(v).size(); };
+	void operator+=(const char* v) { _size == 0 ? _str = _strdup(v) :  _str = strcat(_str, v); _size += strlen(v); };
+	void operator+=(char v) { _size == 0 ? _str = new char[2]{ v, '\0' } : _str = strcat(_str, new char[2]{ v, '\0' }); _size++; };
+	void operator+=(std::string v) { _size == 0 ? _str = _strdup(v.c_str()) : _str = strcat(_str, v.c_str()); _size += v.size(); };
+	void operator+=(strinx v) { _size == 0 ? _str = _strdup(v.c_str()) : _str = strcat(_str, v.c_str()); _size += v.size(); };
+	void operator+=(int v) { _size == 0 ? _str = _strdup(stx(v).c_str()) : _str = strcat(_str, stx(v).c_str()); _size += stx(v).size(); };
+	void operator+=(float v) { _size == 0 ? _str = _strdup(stx(v).c_str()) : _str = strcat(_str, stx(v).c_str()); _size += stx(v).size(); };
 
 	bool operator==(char v) {
 		if (_str[0] == v)
@@ -244,7 +268,7 @@ public:
 		while (canmove()) {
 			volatile bool _y = false;
 			for (volatile size_t i = 0; i < split.size(); i++)
-				if (_str[_it] == split.chars()[i])
+				if (_str[_it] == split[i])
 					_y = true;
 			if (_y)
 				move();
@@ -253,27 +277,155 @@ public:
 		};
 		if (canmove()) {
 			v.clear();
-			while (_str[_it] != ' ' && _str[_it] != '\n' && _str[_it] != '\t' && canmove()) {
-				v += _str[_it];
-				move();
+			bool _y = false;
+			for (; canmove(); move()) {
+				for (volatile size_t i = 0; i < split.size(); i++)
+					if (_str[_it] == split[i]) {
+						_y = true;
+					};
+				if (_y == false)
+					v += _str[_it];
+				else
+					break;
 			};
 			return true;
 		}
 		else
 			return false;
 	};
-	/*bool getline(strinx& v) {
-		if (canmoveline()) {
+	bool operator>>(std::string& v) {
+		while (canmove()) {
+			volatile bool _y = false;
+			for (volatile size_t i = 0; i < split.size(); i++)
+				if (_str[_it] == split[i])
+					_y = true;
+			if (_y)
+				move();
+			else
+				break;
+		};
+		if (canmove()) {
 			v.clear();
-			while (_str[_it] != '\n') {
-				v += _str[_it];
-				_it++;
+			bool _y = false;
+			for (; canmove(); move()) {
+				for (volatile size_t i = 0; i < split.size(); i++)
+					if (_str[_it] == split[i]) {
+						_y = true;
+					};
+				if (_y == false)
+					v += _str[_it];
+				else
+					break;
 			};
 			return true;
 		}
 		else
-			false;
-	}*/
+			return false;
+	};
+	bool operator>>(const char*& v) {
+		std::string  _v;
+		while (canmove()) {
+			volatile bool _y = false;
+			for (volatile size_t i = 0; i < split.size(); i++)
+				if (_str[_it] == split[i])
+					_y = true;
+			if (_y)
+				move();
+			else
+				break;
+		};
+		if (canmove()) {
+			_v.clear();
+			bool _y = false;
+			for (; canmove(); move()) {
+				for (volatile size_t i = 0; i < split.size(); i++)
+					if (_str[_it] == split[i]) {
+						_y = true;
+					};
+				if (_y == false)
+					_v += _str[_it];
+				else
+					break;
+			};
+			v = _v.c_str();
+			return true;
+		}
+		else
+			return false;
+	};
+	bool getline(strinx& v) {
+		v.clear();
+		if (canmoveline()) {
+			for (; canmove(); move()) {
+				if (_str[_it] != '\n')
+					break;
+			};
+			for (; _str[_it] != '\n' && canmove(); move()) {
+				v += _str[_it];
+			};
+			return true;
+		}
+		else
+			return false;
+	};
+	bool getline(std::string& v) {
+		v.clear();
+		if (canmoveline()) {
+			for (; canmove(); move()) {
+				if (_str[_it] != '\n')
+					break;
+			};
+			for (; _str[_it] != '\n' && canmove(); move()) {
+				v += _str[_it];
+			};
+			return true;
+		}
+		else
+			return false;
+	};
+	bool getline(const char*& v) {
+		std::string _v;
+		if (canmoveline()) {
+			for (; canmove(); move()) {
+				if (_str[_it] != '\n')
+					break;
+			};
+			for (; _str[_it] != '\n' && canmove(); move()) {
+				_v += _str[_it];
+			};
+			v = _v.c_str();
+			return true;
+		}
+		else
+			return false;
+	};
+	bool get(char& v) {
+		if (canmove()) {
+			v = _str[_it];
+			return move();
+		}
+		else {
+			return false;
+		};
+	};
+	bool get(strinx& v) {
+		if (canmove()) {
+			v = _str[_it];
+			return move();
+		}
+		else {
+			return false;
+		};
+	};
+	bool get(std::string& v) {
+		if (canmove()) {
+			v = _str[_it];
+			return move();
+		}
+		else {
+			return false;
+		};
+	};
 
 	strinx operator*(size_t v) {
 		strinx _t;
@@ -286,6 +438,23 @@ public:
 		this->clear();
 		for (volatile size_t i = 0; i < v; i++)
 			*this += _t;
+	};
+	strinx operator*(char v) {
+		strinx _t = *this, _j;
+		this->resize(_size);
+		for (volatile size_t i = 0; i < _size * 2; i += 2) {
+			_j[i] = _t[i / 2];
+			_j[i + 1] = v;
+		};
+		return _j;
+	};
+	void operator*=(char v) {
+		strinx _t = *this;
+		this->resize(_size);
+		for (volatile size_t i = 0; i < _size * 2; i+=2) {
+			_str[i] = _t[i/2];
+			_str[i+1] = v;
+		};
 	};
 
 	float to_float() { return std::stof(_str); };
@@ -379,100 +548,107 @@ public:
 		return _t;
 	}
 
-	void up() {
-		if (_size > 0)
-			switch (_str[0]) {
-			case 'a': _str[0] = 'A'; break;
-			case 'b': _str[0] = 'B'; break;
-			case 'c': _str[0] = 'C'; break;
-			case 'd': _str[0] = 'D'; break;
-			case 'e': _str[0] = 'E'; break;
-			case 'f': _str[0] = 'F'; break;
-			case 'g': _str[0] = 'G'; break;
-			case 'h': _str[0] = 'H'; break;
-			case 'i': _str[0] = 'I'; break;
-			case 'j': _str[0] = 'J'; break;
-			case 'k': _str[0] = 'K'; break;
-			case 'l': _str[0] = 'L'; break;
-			case 'm': _str[0] = 'M'; break;
-			case 'n': _str[0] = 'N'; break;
-			case 'o': _str[0] = 'O'; break;
-			case 'p': _str[0] = 'P'; break;
-			case 'r': _str[0] = 'R'; break;
-			case 's': _str[0] = 'S'; break;
-			case 't': _str[0] = 'T'; break;
-			case 'q': _str[0] = 'Q'; break;
-			case 'u': _str[0] = 'U'; break;
-			case 'v': _str[0] = 'V'; break;
-			case 'w': _str[0] = 'W'; break;
-			case 'x': _str[0] = 'X'; break;
-			case 'y': _str[0] = 'Y'; break;
-			case 'z': _str[0] = 'Z'; break;
-			}
-	};
-	void low() {
-		if (_size > 0)
-			switch (_str[0]) {
-			case 'A': _str[0] = 'a'; break;
-			case 'B': _str[0] = 'b'; break;
-			case 'C': _str[0] = 'c'; break;
-			case 'D': _str[0] = 'd'; break;
-			case 'E': _str[0] = 'e'; break;
-			case 'F': _str[0] = 'f'; break;
-			case 'G': _str[0] = 'g'; break;
-			case 'H': _str[0] = 'h'; break;
-			case 'I': _str[0] = 'i'; break;
-			case 'J': _str[0] = 'j'; break;
-			case 'K': _str[0] = 'k'; break;
-			case 'L': _str[0] = 'l'; break;
-			case 'M': _str[0] = 'm'; break;
-			case 'N': _str[0] = 'n'; break;
-			case 'O': _str[0] = 'o'; break;
-			case 'P': _str[0] = 'p'; break;
-			case 'R': _str[0] = 'r'; break;
-			case 'S': _str[0] = 's'; break;
-			case 'T': _str[0] = 't'; break;
-			case 'Q': _str[0] = 'q'; break;
-			case 'U': _str[0] = 'u'; break;
-			case 'V': _str[0] = 'v'; break;
-			case 'W': _str[0] = 'w'; break;
-			case 'X': _str[0] = 'x'; break;
-			case 'Y': _str[0] = 'y'; break;
-			case 'Z': _str[0] = 'z'; break;
-			}
-	};
-	void up(size_t v) {
-		switch (_str[v]) {
-		case 'a': _str[v] = 'A'; break;
-		case 'b': _str[v] = 'B'; break;
-		case 'c': _str[v] = 'C'; break;
-		case 'd': _str[v] = 'D'; break;
-		case 'e': _str[v] = 'E'; break;
-		case 'f': _str[v] = 'F'; break;
-		case 'g': _str[v] = 'G'; break;
-		case 'h': _str[v] = 'H'; break;
-		case 'i': _str[v] = 'I'; break;
-		case 'j': _str[v] = 'J'; break;
-		case 'k': _str[v] = 'K'; break;
-		case 'l': _str[v] = 'L'; break;
-		case 'm': _str[v] = 'M'; break;
-		case 'n': _str[v] = 'N'; break;
-		case 'o': _str[v] = 'O'; break;
-		case 'p': _str[v] = 'P'; break;
-		case 'r': _str[v] = 'R'; break;
-		case 's': _str[v] = 'S'; break;
-		case 't': _str[v] = 'T'; break;
-		case 'q': _str[v] = 'Q'; break;
-		case 'u': _str[v] = 'U'; break;
-		case 'v': _str[v] = 'V'; break;
-		case 'w': _str[v] = 'W'; break;
-		case 'x': _str[v] = 'X'; break;
-		case 'y': _str[v] = 'Y'; break;
-		case 'z': _str[v] = 'Z'; break;
+	bool up() {
+		switch (_str[_it]) {
+		case 'a': _str[_it] = 'A'; break;
+		case 'b': _str[_it] = 'B'; break;
+		case 'c': _str[_it] = 'C'; break;
+		case 'd': _str[_it] = 'D'; break;
+		case 'e': _str[_it] = 'E'; break;
+		case 'f': _str[_it] = 'F'; break;
+		case 'g': _str[_it] = 'G'; break;
+		case 'h': _str[_it] = 'H'; break;
+		case 'i': _str[_it] = 'I'; break;
+		case 'j': _str[_it] = 'J'; break;
+		case 'k': _str[_it] = 'K'; break;
+		case 'l': _str[_it] = 'L'; break;
+		case 'm': _str[_it] = 'M'; break;
+		case 'n': _str[_it] = 'N'; break;
+		case 'o': _str[_it] = 'O'; break;
+		case 'p': _str[_it] = 'P'; break;
+		case 'r': _str[_it] = 'R'; break;
+		case 's': _str[_it] = 'S'; break;
+		case 't': _str[_it] = 'T'; break;
+		case 'q': _str[_it] = 'Q'; break;
+		case 'u': _str[_it] = 'U'; break;
+		case 'v': _str[_it] = 'V'; break;
+		case 'w': _str[_it] = 'W'; break;
+		case 'x': _str[_it] = 'X'; break;
+		case 'y': _str[_it] = 'Y'; break;
+		case 'z': _str[_it] = 'Z'; break;
 		}
+		return move();
 	};
-	void low(size_t v) {
-		if (_size > 0)
+	bool low() {
+		switch (_str[_it]) {
+		case 'A': _str[_it] = 'a'; break;
+		case 'B': _str[_it] = 'b'; break;
+		case 'C': _str[_it] = 'c'; break;
+		case 'D': _str[_it] = 'd'; break;
+		case 'E': _str[_it] = 'e'; break;
+		case 'F': _str[_it] = 'f'; break;
+		case 'G': _str[_it] = 'g'; break;
+		case 'H': _str[_it] = 'h'; break;
+		case 'I': _str[_it] = 'i'; break;
+		case 'J': _str[_it] = 'j'; break;
+		case 'K': _str[_it] = 'k'; break;
+		case 'L': _str[_it] = 'l'; break;
+		case 'M': _str[_it] = 'm'; break;
+		case 'N': _str[_it] = 'n'; break;
+		case 'O': _str[_it] = 'o'; break;
+		case 'P': _str[_it] = 'p'; break;
+		case 'R': _str[_it] = 'r'; break;
+		case 'S': _str[_it] = 's'; break;
+		case 'T': _str[_it] = 't'; break;
+		case 'Q': _str[_it] = 'q'; break;
+		case 'U': _str[_it] = 'u'; break;
+		case 'V': _str[_it] = 'v'; break;
+		case 'W': _str[_it] = 'w'; break;
+		case 'X': _str[_it] = 'x'; break;
+		case 'Y': _str[_it] = 'y'; break;
+		case 'Z': _str[_it] = 'z'; break;
+		}
+		return move();
+	};
+	bool up(size_t v) {
+		if (v > _size)
+			return false;
+		else
+			switch (_str[v]) {
+			case 'a': _str[v] = 'A'; break;
+			case 'b': _str[v] = 'B'; break;
+			case 'c': _str[v] = 'C'; break;
+			case 'd': _str[v] = 'D'; break;
+			case 'e': _str[v] = 'E'; break;
+			case 'f': _str[v] = 'F'; break;
+			case 'g': _str[v] = 'G'; break;
+			case 'h': _str[v] = 'H'; break;
+			case 'i': _str[v] = 'I'; break;
+			case 'j': _str[v] = 'J'; break;
+			case 'k': _str[v] = 'K'; break;
+			case 'l': _str[v] = 'L'; break;
+			case 'm': _str[v] = 'M'; break;
+			case 'n': _str[v] = 'N'; break;
+			case 'o': _str[v] = 'O'; break;
+			case 'p': _str[v] = 'P'; break;
+			case 'r': _str[v] = 'R'; break;
+			case 's': _str[v] = 'S'; break;
+			case 't': _str[v] = 'T'; break;
+			case 'q': _str[v] = 'Q'; break;
+			case 'u': _str[v] = 'U'; break;
+			case 'v': _str[v] = 'V'; break;
+			case 'w': _str[v] = 'W'; break;
+			case 'x': _str[v] = 'X'; break;
+			case 'y': _str[v] = 'Y'; break;
+			case 'z': _str[v] = 'Z'; break;
+			default: return false;
+			};
+		return true;
+	};
+	bool low(size_t v) {
+		if (v > _size)
+			return false;
+		else
 			switch (_str[v]) {
 			case 'A': _str[v] = 'a'; break;
 			case 'B': _str[v] = 'b'; break;
@@ -500,7 +676,9 @@ public:
 			case 'X': _str[v] = 'x'; break;
 			case 'Y': _str[v] = 'y'; break;
 			case 'Z': _str[v] = 'z'; break;
-			}
+			default: return false;
+			};
+		return true;
 	};
 	void up(size_t begin, size_t end) {
 		for (size_t i = begin; i < end && i < _size; i++) {
