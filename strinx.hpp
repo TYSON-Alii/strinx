@@ -1,6 +1,7 @@
 #include <sstream>
 #include <vector>
-class strinx {
+
+class strinx{
 private:
 	char* _str = new char[1]{'\0'};
 	size_t _size = 0;
@@ -9,8 +10,13 @@ private:
 	std::string stx(double v) { std::stringstream ss; ss << v; return ss.str(); };
 	std::string stx(int v) { std::stringstream ss; ss << v; return ss.str(); };
 	std::string stx(char v) { std::stringstream ss; ss << v; return ss.str(); };
-	std::string stx(const char* v) { std::stringstream ss; ss << v; return ss.str(); };
+	std::string stx(const char* v) { return string(v); };
 public:
+	operator bool() { return _str[0] == '\0' ? false : true; };
+	operator int() { return this->to_int(); };
+	operator float() { return this->to_float(); };
+	operator double() { return this->to_double(); };
+	operator std::string() { return this->str(); };
 	class Split {
 	private:
 		std::vector<char> _ss;
@@ -53,15 +59,6 @@ public:
 		size_t size() { return _ss.size(); };
 		size_t lenght() { return _ss.size(); };
 	};
-	enum PrintType {
-		All,
-		Char,
-		Line,
-		Word,
-		Reverse,
-		Upper,
-		Lower
-	};
 	size_t size() { return _size; };
 	size_t lenght() { return _size; };
 	size_t len() { return _size; };
@@ -70,7 +67,6 @@ public:
 	char& first() { return _str[0]; };
 	char& last() { return _str[_size - 1]; };
 	char& middle() { return _str[_size / 2]; };
-	void print(PrintType v = PrintType::All);
 	Split split;
 	size_t& iterator() { return _it; };
 	void reset() { _it = 0; };
@@ -176,6 +172,100 @@ public:
 		};
 	};
 
+	bool starts_with(char v) {
+		if (_size > 0)
+			return _str[0] == v;
+		else
+			return false;
+	};
+	bool starts_with(const char* v) {
+		if (_size > strlen(v))
+			return this->operator()(0, strlen(v)) == v;
+		else if (_size == strlen(v))
+			return *this == v;
+		else
+			return false;
+	};
+	bool starts_with(std::string v) {
+		if (_size > v.size())
+			return this->operator()(0, v.size() - 1) == v;
+		else if (_size == v.size())
+			return *this == v;
+		else
+			return false;
+	};
+	bool starts_with(strinx v) {
+		if (_size > v.size())
+			return this->operator()(0, v.size() - 1) == v;
+		else if (_size == v.size())
+			return *this == v;
+		else
+			return false;
+	};
+	bool starts_with(int v) {
+		if (_size > stx(v).size())
+			return this->operator()(0, stx(v).size() - 1) == v;
+		else if (_size == stx(v).size())
+			return *this == v;
+		else
+			return false;
+	};
+	bool starts_with(float v) {
+		if (_size > stx(v).size())
+			return this->operator()(0, stx(v).size() - 1) == v;
+		else if (_size == stx(v).size())
+			return *this == v;
+		else
+			return false;
+	};
+
+	bool ends_with(char v) {
+		if (_size > 0)
+			return _str[_size-1] == v;
+		else
+			return false;
+	};
+	bool ends_with(const char* v) {
+		if (_size > strlen(v))
+			return this->operator()(_size - strlen(v), _size) == v;
+		else if (_size == strlen(v))
+			return *this == v;
+		else
+			return false;
+	};
+	bool ends_with(std::string v) {
+		if (_size > v.size())
+			return this->operator()(_size - v.size(), _size) == v;
+		else if (_size == v.size())
+			return *this == v;
+		else
+			return false;
+	};
+	bool ends_with(strinx v) {
+		if (_size > v.size())
+			return this->operator()(_size - v.size(), _size) == v;
+		else if (_size == v.size())
+			return *this == v;
+		else
+			return false;
+	};
+	bool ends_with(int v) {
+		if (_size > stx(v).size())
+			return this->operator()(_size - stx(v).size(), _size) == v;
+		else if (_size == stx(v).size())
+			return *this == v;
+		else
+			return false;
+	};
+	bool ends_with(float v) {
+		if (_size > stx(v).size())
+			return this->operator()(_size - stx(v).size(), _size) == v;
+		else if (_size == stx(v).size())
+			return *this == v;
+		else
+			return false;
+	};
+
 	void operator=(char v) { _str = new char[2]{ v, '\0' }; _size = 1; };
 	void operator=(const char* v) { _str = _strdup(v); _size = strlen(v); };
 	void operator=(std::string v) { _str = _strdup(v.c_str()); _size = v.size(); };
@@ -208,10 +298,8 @@ public:
 	};
 	bool operator==(std::string v) {
 		if (_size == v.size()) {
-			size_t _c = 0;
 			for (size_t i = 0; i < _size; i++)
-				if (_str[i] == v[i])
-					_c++;
+				if (_str[i] == v[i]);
 				else
 					return false;
 			return true;
@@ -242,6 +330,22 @@ public:
 		};
 		return false;
 	}
+	bool operator==(strinx v) {
+		if (_size == v.size()) {
+			for (size_t i = 0; i < _size; i++)
+				if (_str[i] == v[i]);
+				else
+					return false;
+			return true;
+		};
+		return false;
+	}
+
+	bool operator!=(char v) { return !(*this == v); };
+	bool operator!=(const char* v) { return !(*this == v); };
+	bool operator!=(std::string v) { return !(*this == v); };
+	bool operator!=(int v) { return !(*this == v); };
+	bool operator!=(float v) { return !(*this == v); };
 
 	void operator-=(char v) { takeout(v); };
 	void operator-=(const char* v) { takeout(v); };
@@ -1180,3 +1284,4 @@ public:
 	void replace(int v, float q) { if (check(v)) { this->takeout(v); this->insert(find(v), q); }; };
 	void replace(float v, float q) { if (check(v)) { this->takeout(v); this->insert(find(v), q); }; };
 };
+typedef strinx stx;
