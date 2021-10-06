@@ -146,6 +146,48 @@ public:
 	strinx(int v) { _str = strcat(_strdup(stx(v).c_str()), "\0"); _size = strlen(_str); };
 	strinx(double v) { _str = strcat(_strdup(stx(v).c_str()), "\0"); _size = strlen(_str); };
 	strinx(float v) { _str = strcat(_strdup(stx(v).c_str()), "\0"); _size = strlen(_str); };
+	strinx(std::initializer_list<int> v) {
+		strinx t;
+		t += '{';
+		t += ' ';
+		for (const auto& i : v) {
+			t += i;
+			t += ',';
+			t += ' ';
+		};
+		t = t(0, t.size() - 1);
+		t += ' ';
+		t += '}';
+		*this = t;
+	};
+	strinx(std::initializer_list<const char*> v) {
+		strinx t;
+		t += '{';
+		t += ' ';
+		for (const auto& i : v) {
+			t += i;
+			t += ',';
+			t += ' ';
+		};
+		t = t(0, t.size() - 1);
+		t += ' ';
+		t += '}';
+		*this = t;
+	};
+	strinx(std::initializer_list<float> v) {
+		strinx t;
+		t += '{';
+		t += ' ';
+		for (const auto& i : v) {
+			t += i;
+			t += ',';
+			t += ' ';
+		};
+		t = t(0, t.size() - 1);
+		t += ' ';
+		t += '}';
+		*this = t;
+	};
 	char& operator[](size_t v) { return _str[v]; };
 	strinx operator()() { return *this; };
 	strinx operator()(size_t v) { return strinx(_str[v]); };
@@ -272,6 +314,9 @@ public:
 	void operator=(std::string v) { _str = _strdup(v.c_str()); _size = v.size(); };
 	void operator=(int v) { _str = _strdup(stx(v).c_str()); _size = strlen(_str); };
 	void operator=(float v) { _str = _strdup(stx(v).c_str()); _size = strlen(_str); };
+	void operator=(std::initializer_list<int> v) { *this = strinx(v); };
+	void operator=(std::initializer_list<float> v) { *this = strinx(v); };
+	void operator=(std::initializer_list<const char*> v) { *this = strinx(v); };
 
 	void operator+=(const char* v) { _size == 0 ? _str = _strdup(v) :  _str = strcat(_str, v); _size += strlen(v); };
 	void operator+=(char v) { _size == 0 ? _str = new char[2]{ v, '\0' } : _str = strcat(_str, new char[2]{ v, '\0' }); _size++; };
@@ -279,6 +324,9 @@ public:
 	void operator+=(strinx v) { _size == 0 ? _str = _strdup(v.c_str()) : _str = strcat(_str, v.c_str()); _size += v.size(); };
 	void operator+=(int v) { _size == 0 ? _str = _strdup(stx(v).c_str()) : _str = strcat(_str, stx(v).c_str()); _size += stx(v).size(); };
 	void operator+=(float v) { _size == 0 ? _str = _strdup(stx(v).c_str()) : _str = strcat(_str, stx(v).c_str()); _size += stx(v).size(); };
+	void operator+=(std::initializer_list<int> v) { *this += strinx(v); };
+	void operator+=(std::initializer_list<float> v) { *this += strinx(v); };
+	void operator+=(std::initializer_list<const char*> v) { *this += strinx(v); };
 
 	bool operator==(char v) {
 		if (_str[0] == v)
