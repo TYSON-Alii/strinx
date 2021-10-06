@@ -338,6 +338,16 @@ public:
 	strinx operator<<(std::initializer_list<float> v) { *this += v; return *this; };
 	strinx operator<<(std::initializer_list<const char*> v) { *this += v; return *this; };
 
+	strinx operator<(const char* v) { *this += v; return *this; };
+	strinx operator<(char v) { *this += v; return *this; };
+	strinx operator<(std::string v) { *this += v; return *this; };
+	strinx operator<(strinx v) { *this += v; return *this; };
+	strinx operator<(int v) { *this += v; return *this; };
+	strinx operator<(float v) { *this += v; return *this; };
+	strinx operator<(std::initializer_list<int> v) { *this += v; return *this; };
+	strinx operator<(std::initializer_list<float> v) { *this += v; return *this; };
+	strinx operator<(std::initializer_list<const char*> v) { *this += v; return *this; };
+
 	bool operator==(char v) {
 		if (_str[0] == v)
 			return true;
