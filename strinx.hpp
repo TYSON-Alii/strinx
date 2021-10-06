@@ -10,8 +10,9 @@ private:
 	std::string stx(double v) { std::stringstream ss; ss << v; return ss.str(); };
 	std::string stx(int v) { std::stringstream ss; ss << v; return ss.str(); };
 	std::string stx(char v) { std::stringstream ss; ss << v; return ss.str(); };
-	std::string stx(const char* v) { return string(v); };
+	std::string stx(const char* v) { return std::string(v); };
 public:
+	friend std::ostream& operator<<(std::ostream& os, const strinx& v);
 	operator bool() { return _str[0] == '\0' ? false : true; };
 	operator int() { return this->to_int(); };
 	operator float() { return this->to_float(); };
@@ -367,6 +368,24 @@ public:
 	strinx operator+(strinx v) { strinx _t = *this; _t += v; return _t; };
 	strinx operator+(int v) { strinx _t = *this; _t += v; return _t; };
 	strinx operator+(float v) { strinx _t = *this; _t += v; return _t; };
+
+	strinx random() {
+		strinx temp;
+		size_t p;
+		std::vector<size_t> ss;
+		for (size_t i = 0; i < _size; i++) {
+			p = rand() % _size;
+		_r:;
+			for (auto& j : ss)
+				if (j == p) {
+					p = rand() % _size;
+					goto _r;
+				};
+			ss.push_back(p);
+			temp += this->operator[](p);
+		}
+		return temp;
+	};
 
 	bool operator>>(strinx& v) {
 		while (canmove()) {
@@ -1285,3 +1304,8 @@ public:
 	void replace(float v, float q) { if (check(v)) { this->takeout(v); this->insert(find(v), q); }; };
 };
 typedef strinx stx;
+std::ostream& operator<<(std::ostream& os, const strinx& v) {
+	strinx _v = v;
+	os << _v.c_str();
+	return os;
+};
