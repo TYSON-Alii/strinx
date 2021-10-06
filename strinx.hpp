@@ -1305,6 +1305,7 @@ public:
 };
 typedef strinx stx;
 strinx operator""_stx(const char* v, size_t) { return strinx(v); };
+strinx operator""_stx(unsigned long long v) { return strinx(int(v)); };
 std::ostream& operator<<(std::ostream& os, const strinx& v) {
 	strinx _v = v;
 	os << _v.c_str();
