@@ -1304,6 +1304,7 @@ public:
 	void replace(float v, float q) { if (check(v)) { this->takeout(v); this->insert(find(v), q); }; };
 };
 typedef strinx stx;
+strinx operator""_stx(const char* v, size_t) { return strinx(v); };
 std::ostream& operator<<(std::ostream& os, const strinx& v) {
 	strinx _v = v;
 	os << _v.c_str();
