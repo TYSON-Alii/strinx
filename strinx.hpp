@@ -8,7 +8,7 @@ private:
 	size_t _it = 0;
 	std::string stx(float v) { std::stringstream ss; ss << v; return ss.str(); };
 	std::string stx(double v) { std::stringstream ss; ss << v; return ss.str(); };
-	std::string stx(int v) { std::stringstream ss; ss << v; return ss.str(); };
+	std::string stx(int v) { return std::to_string(v); };
 	std::string stx(char v) { std::stringstream ss; ss << v; return ss.str(); };
 	std::string stx(const char* v) { return std::string(v); };
 public:
@@ -140,6 +140,7 @@ public:
 	const char* c_str() { return _str; };
 	std::string str() { return std::string(c_str()); };
 	strinx() {};
+	strinx(const strinx&) = default;
 	strinx(const char* v) { _str = strcat(_strdup(v), "\0"); _size = strlen(_str); };
 	strinx(char v) { _str = new char[2]{ v, '\0' }; _size = 1; };
 	strinx(std::string v) { _str = strcat(_strdup(v.c_str()), "\0"); _size = v.size(); };
@@ -318,12 +319,12 @@ public:
 	void operator=(std::initializer_list<float> v) { *this = strinx(v); };
 	void operator=(std::initializer_list<const char*> v) { *this = strinx(v); };
 
-	void operator+=(const char* v) { _size == 0 ? _str = _strdup(v) :  _str = strcat(_str, v); _size += strlen(v); };
-	void operator+=(char v) { _size == 0 ? _str = new char[2]{ v, '\0' } : _str = strcat(_str, new char[2]{ v, '\0' }); _size++; };
-	void operator+=(std::string v) { _size == 0 ? _str = _strdup(v.c_str()) : _str = strcat(_str, v.c_str()); _size += v.size(); };
-	void operator+=(strinx v) { _size == 0 ? _str = _strdup(v.c_str()) : _str = strcat(_str, v.c_str()); _size += v.size(); };
-	void operator+=(int v) { _size == 0 ? _str = _strdup(stx(v).c_str()) : _str = strcat(_str, stx(v).c_str()); _size += stx(v).size(); };
-	void operator+=(float v) { _size == 0 ? _str = _strdup(stx(v).c_str()) : _str = strcat(_str, stx(v).c_str()); _size += stx(v).size(); };
+	void operator+=(const char* v) { (_size == 0) ? (_str = _strdup(v)) :  (_str = strcat(_str, v)); _size += strlen(v); };
+	void operator+=(char v) { (_size == 0) ? (_str = new char[2]{ v, '\0' }) : (_str = strcat(_str, new char[2]{ v, '\0' })); _size++; };
+	void operator+=(std::string v) { (_size == 0) ? (_str = _strdup(v.c_str())) : (_str = strcat(_str, v.c_str())); _size += v.size(); };
+	void operator+=(strinx v) { (_size == 0) ? (_str = _strdup(v.c_str())) : (_str = strcat(_str, v.c_str())); _size += v.size(); };
+	void operator+=(int v) { (_size == 0) ? (_str = _strdup(stx(v).c_str())) : (_str = strcat(_str, stx(v).c_str())); _size += stx(v).size(); };
+	void operator+=(float v) { (_size == 0) ? (_str = _strdup(stx(v).c_str())) : (_str = strcat(_str, stx(v).c_str())); _size += stx(v).size(); };
 	void operator+=(std::initializer_list<int> v) { *this += strinx(v); };
 	void operator+=(std::initializer_list<float> v) { *this += strinx(v); };
 	void operator+=(std::initializer_list<const char*> v) { *this += strinx(v); };
@@ -453,6 +454,25 @@ public:
 			temp += this->operator[](p);
 		}
 		return temp;
+	};
+
+	void format() {};
+	template <typename T, typename ...TAIL>
+	strinx& format(const T& v, TAIL... tail) {
+		strinx c = *this;
+		strinx s;
+		clear();
+		while (c >> s) {
+			if (s == "{}") {
+				this->operator+=(v);
+				format(tail...);
+			}
+			else
+				this->operator+=(s);
+			if (c.canmove())
+				this->operator+=(' ');
+		};
+		return *this;
 	};
 
 	bool operator>>(strinx& v) {
@@ -1334,42 +1354,42 @@ public:
 		_str[_size] = '\0';
 	};
 
-	void replace(char v, char q)			{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
-	void replace(const char* v, char q)		{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
-	void replace(std::string v, char q)		{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
-	void replace(strinx v, char q)			{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
-	void replace(int v, char q)			{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
-	void replace(float v, char q)			{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
-	void replace(char v, const char* q)		{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
+	void replace(char v, char q)				{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
+	void replace(const char* v, char q)			{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
+	void replace(std::string v, char q)			{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
+	void replace(strinx v, char q)				{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
+	void replace(int v, char q)					{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
+	void replace(float v, char q)				{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
+	void replace(char v, const char* q)			{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
 	void replace(const char* v, const char* q)	{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
 	void replace(std::string v, const char* q)	{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
 	void replace(strinx v, const char* q)		{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
-	void replace(int v, const char* q)		{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
+	void replace(int v, const char* q)			{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
 	void replace(float v, const char* q)		{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
-	void replace(char v, std::string q)		{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
+	void replace(char v, std::string q)			{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
 	void replace(const char* v, std::string q)	{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
 	void replace(std::string v, std::string q)	{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
 	void replace(strinx v, std::string q)		{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
-	void replace(int v, std::string q)		{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
+	void replace(int v, std::string q)			{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
 	void replace(float v, std::string q)		{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
-	void replace(char v, strinx q)			{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
+	void replace(char v, strinx q)				{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
 	void replace(const char* v, strinx q)		{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
 	void replace(std::string v, strinx q)		{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
-	void replace(strinx v, strinx q)		{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
-	void replace(int v, strinx q)			{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
-	void replace(float v, strinx q)			{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
-	void replace(char v, int q)			{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
-	void replace(const char* v, int q)		{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
-	void replace(std::string v, int q)		{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
-	void replace(strinx v, int q)			{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
-	void replace(int v, int q)			{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
-	void replace(float v, int q)			{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
-	void replace(char v, float q)			{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
+	void replace(strinx v, strinx q)			{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
+	void replace(int v, strinx q)				{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
+	void replace(float v, strinx q)				{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
+	void replace(char v, int q)					{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
+	void replace(const char* v, int q)			{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
+	void replace(std::string v, int q)			{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
+	void replace(strinx v, int q)				{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
+	void replace(int v, int q)					{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
+	void replace(float v, int q)				{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
+	void replace(char v, float q)				{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
 	void replace(const char* v, float q)		{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
 	void replace(std::string v, float q)		{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
-	void replace(strinx v, float q)			{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
-	void replace(int v, float q)			{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
-	void replace(float v, float q)			{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
+	void replace(strinx v, float q)				{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
+	void replace(int v, float q)				{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
+	void replace(float v, float q)				{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
 };
 typedef strinx stx;
 strinx operator""_stx(const char* v, size_t) { return strinx(v); };
