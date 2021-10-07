@@ -11,6 +11,8 @@ private:
 	std::string stx(int v) { return std::to_string(v); };
 	std::string stx(char v) { std::stringstream ss; ss << v; return ss.str(); };
 	std::string stx(const char* v) { return std::string(v); };
+	std::vector<strinx> _split;
+	bool _splt = false;
 public:
 	friend std::ostream& operator<<(std::ostream& os, const strinx& v);
 	operator bool() { return _str[0] == '\0' ? false : true; };
@@ -18,7 +20,7 @@ public:
 	operator float() { return this->to_float(); };
 	operator double() { return this->to_double(); };
 	operator std::string() { return this->str(); };
-	class Split {
+	class Split_it_t {
 	private:
 		std::vector<char> _ss;
 		bool _is_in(char v) {
@@ -28,7 +30,7 @@ public:
 			return false;
 		};
 	public:
-		Split() { _ss.push_back(' '); _ss.push_back('\n'); _ss.push_back('\t'); };
+		Split_it_t() { _ss.push_back(' '); _ss.push_back('\n'); _ss.push_back('\t'); };
 		bool operator()(char v) {
 			if (_is_in(v))
 				return false;
@@ -68,7 +70,7 @@ public:
 	char& first() { return _str[0]; };
 	char& last() { return _str[_size - 1]; };
 	char& middle() { return _str[_size / 2]; };
-	Split split;
+	Split_it_t split_it;
 	size_t& iterator() { return _it; };
 	void reset() { _it = 0; };
 	bool canmove() { return _it >= _size ? false : true; };
@@ -215,6 +217,17 @@ public:
 			_size = v;
 		};
 	};
+	typedef std::vector<strinx> Split_t;
+	Split_t& split() {
+		if (!_splt) {
+			strinx c = *this, s;
+			while (c >> s)
+				_split.push_back(s);
+			_splt = true;
+		}
+		else
+			return _split;
+	};
 
 	bool starts_with(char v) {
 		if (_size > 0)
@@ -310,24 +323,24 @@ public:
 			return false;
 	};
 
-	void operator=(char v) { _str = new char[2]{ v, '\0' }; _size = 1; };
-	void operator=(const char* v) { _str = _strdup(v); _size = strlen(v); };
-	void operator=(std::string v) { _str = _strdup(v.c_str()); _size = v.size(); };
-	void operator=(int v) { _str = _strdup(stx(v).c_str()); _size = strlen(_str); };
-	void operator=(float v) { _str = _strdup(stx(v).c_str()); _size = strlen(_str); };
-	void operator=(std::initializer_list<int> v) { *this = strinx(v); };
-	void operator=(std::initializer_list<float> v) { *this = strinx(v); };
-	void operator=(std::initializer_list<const char*> v) { *this = strinx(v); };
+	void operator=(char v) { _str = new char[2]{ v, '\0' }; _size = 1; _splt = false; };
+	void operator=(const char* v) { _str = _strdup(v); _size = strlen(v); _splt = false; };
+	void operator=(std::string v) { _str = _strdup(v.c_str()); _size = v.size(); _splt = false; };
+	void operator=(int v) { _str = _strdup(stx(v).c_str()); _size = strlen(_str); _splt = false; };
+	void operator=(float v) { _str = _strdup(stx(v).c_str()); _size = strlen(_str); _splt = false; };
+	void operator=(std::initializer_list<int> v) { *this = strinx(v); _splt = false; };
+	void operator=(std::initializer_list<float> v) { *this = strinx(v); _splt = false; };
+	void operator=(std::initializer_list<const char*> v) { *this = strinx(v); _splt = false; };
 
-	void operator+=(const char* v) { (_size == 0) ? (_str = _strdup(v)) :  (_str = strcat(_str, v)); _size += strlen(v); };
-	void operator+=(char v) { (_size == 0) ? (_str = new char[2]{ v, '\0' }) : (_str = strcat(_str, new char[2]{ v, '\0' })); _size++; };
-	void operator+=(std::string v) { (_size == 0) ? (_str = _strdup(v.c_str())) : (_str = strcat(_str, v.c_str())); _size += v.size(); };
-	void operator+=(strinx v) { (_size == 0) ? (_str = _strdup(v.c_str())) : (_str = strcat(_str, v.c_str())); _size += v.size(); };
-	void operator+=(int v) { (_size == 0) ? (_str = _strdup(stx(v).c_str())) : (_str = strcat(_str, stx(v).c_str())); _size += stx(v).size(); };
-	void operator+=(float v) { (_size == 0) ? (_str = _strdup(stx(v).c_str())) : (_str = strcat(_str, stx(v).c_str())); _size += stx(v).size(); };
-	void operator+=(std::initializer_list<int> v) { *this += strinx(v); };
-	void operator+=(std::initializer_list<float> v) { *this += strinx(v); };
-	void operator+=(std::initializer_list<const char*> v) { *this += strinx(v); };
+	void operator+=(const char* v) { (_size == 0) ? (_str = _strdup(v)) :  (_str = strcat(_str, v)); _size += strlen(v); _splt = false;};
+	void operator+=(char v) { (_size == 0) ? (_str = new char[2]{ v, '\0' }) : (_str = strcat(_str, new char[2]{ v, '\0' })); _size++; _splt = false;};
+	void operator+=(std::string v) { (_size == 0) ? (_str = _strdup(v.c_str())) : (_str = strcat(_str, v.c_str())); _size += v.size(); _splt = false;};
+	void operator+=(strinx v) { (_size == 0) ? (_str = _strdup(v.c_str())) : (_str = strcat(_str, v.c_str())); _size += v.size(); _splt = false; };
+	void operator+=(int v) { (_size == 0) ? (_str = _strdup(stx(v).c_str())) : (_str = strcat(_str, stx(v).c_str())); _size += stx(v).size(); _splt = false; };
+	void operator+=(float v) { (_size == 0) ? (_str = _strdup(stx(v).c_str())) : (_str = strcat(_str, stx(v).c_str())); _size += stx(v).size(); _splt = false; };
+	void operator+=(std::initializer_list<int> v) { *this += strinx(v); _splt = false; };
+	void operator+=(std::initializer_list<float> v) { *this += strinx(v); _splt = false; };
+	void operator+=(std::initializer_list<const char*> v) { *this += strinx(v); _splt = false; };
 
 	strinx& operator<<(const char* v) { *this += v; return *this; };
 	strinx& operator<<(char v) { *this += v; return *this; };
@@ -425,7 +438,7 @@ public:
 	void operator-=(float v) { takeout(v); };
 
 	strinx operator-(char v) { strinx _t = *this; _t.takeout(v); return _t; };
-	strinx operator-(const char* v) { strinx _t = *this; _t.takeout(v); return _t; };
+	strinx operator-(const char* v) { strinx _t = *this; _t.takeout(v); false; return _t; };
 	strinx operator-(std::string v) { strinx _t = *this; _t.takeout(v); return _t; };
 	strinx operator-(strinx v) { strinx _t = *this; _t.takeout(v); return _t; };
 	strinx operator-(int v) { strinx _t = *this; _t.takeout(v); return _t; };
@@ -453,6 +466,7 @@ public:
 			ss.push_back(p);
 			temp += this->operator[](p);
 		}
+		_splt = false;
 		return temp;
 	};
 
@@ -472,14 +486,15 @@ public:
 			if (c.canmove())
 				this->operator+=(' ');
 		};
+		_splt = false;
 		return *this;
 	};
 
 	bool operator>>(strinx& v) {
 		while (canmove()) {
 			volatile bool _y = false;
-			for (volatile size_t i = 0; i < split.size(); i++)
-				if (_str[_it] == split[i])
+			for (volatile size_t i = 0; i < split_it.size(); i++)
+				if (_str[_it] == split_it[i])
 					_y = true;
 			if (_y)
 				move();
@@ -490,8 +505,8 @@ public:
 			v.clear();
 			bool _y = false;
 			for (; canmove(); move()) {
-				for (volatile size_t i = 0; i < split.size(); i++)
-					if (_str[_it] == split[i]) {
+				for (volatile size_t i = 0; i < split_it.size(); i++)
+					if (_str[_it] == split_it[i]) {
 						_y = true;
 					};
 				if (_y == false)
@@ -507,8 +522,8 @@ public:
 	bool operator>>(std::string& v) {
 		while (canmove()) {
 			volatile bool _y = false;
-			for (volatile size_t i = 0; i < split.size(); i++)
-				if (_str[_it] == split[i])
+			for (volatile size_t i = 0; i < split_it.size(); i++)
+				if (_str[_it] == split_it[i])
 					_y = true;
 			if (_y)
 				move();
@@ -519,8 +534,8 @@ public:
 			v.clear();
 			bool _y = false;
 			for (; canmove(); move()) {
-				for (volatile size_t i = 0; i < split.size(); i++)
-					if (_str[_it] == split[i]) {
+				for (volatile size_t i = 0; i < split_it.size(); i++)
+					if (_str[_it] == split_it[i]) {
 						_y = true;
 					};
 				if (_y == false)
@@ -537,8 +552,8 @@ public:
 		std::string  _v;
 		while (canmove()) {
 			volatile bool _y = false;
-			for (volatile size_t i = 0; i < split.size(); i++)
-				if (_str[_it] == split[i])
+			for (volatile size_t i = 0; i < split_it.size(); i++)
+				if (_str[_it] == split_it[i])
 					_y = true;
 			if (_y)
 				move();
@@ -549,8 +564,8 @@ public:
 			_v.clear();
 			bool _y = false;
 			for (; canmove(); move()) {
-				for (volatile size_t i = 0; i < split.size(); i++)
-					if (_str[_it] == split[i]) {
+				for (volatile size_t i = 0; i < split_it.size(); i++)
+					if (_str[_it] == split_it[i]) {
 						_y = true;
 					};
 				if (_y == false)
@@ -649,6 +664,7 @@ public:
 		this->clear();
 		for (volatile size_t i = 0; i < v; i++)
 			*this += _t;
+		_splt = false;
 	};
 	strinx operator*(char v) {
 		strinx _t = *this, _j;
@@ -666,6 +682,7 @@ public:
 			_str[i] = _t[i/2];
 			_str[i+1] = v;
 		};
+		_splt = false;
 	};
 
 	float to_float() { return std::stof(_str); };
@@ -788,6 +805,7 @@ public:
 		case 'y': _str[_it] = 'Y'; break;
 		case 'z': _str[_it] = 'Z'; break;
 		}
+		_splt = false;
 		return move();
 	};
 	bool low() {
@@ -819,6 +837,7 @@ public:
 		case 'Y': _str[_it] = 'y'; break;
 		case 'Z': _str[_it] = 'z'; break;
 		}
+		_splt = false;
 		return move();
 	};
 	bool up(size_t v) {
@@ -854,6 +873,7 @@ public:
 			case 'z': _str[v] = 'Z'; break;
 			default: return false;
 			};
+		_splt = false;
 		return true;
 	};
 	bool low(size_t v) {
@@ -889,6 +909,7 @@ public:
 			case 'Z': _str[v] = 'z'; break;
 			default: return false;
 			};
+		_splt = false;
 		return true;
 	};
 	void up(size_t begin, size_t end) {
@@ -922,6 +943,7 @@ public:
 			case 'z': _str[i] = 'Z'; break;
 			}
 		}
+		_splt = false;
 	};
 	void low(size_t begin, size_t end) {
 		for (size_t i = begin; i < end && i < _size; i++) {
@@ -954,6 +976,7 @@ public:
 			case 'Z': _str[i] = 'z'; break;
 			}
 		}
+		_splt = false;
 	};
 
 	bool check(char v) {
@@ -1135,6 +1158,7 @@ public:
 				_str[i - 1] = _t[i];
 			_size--;
 			_str[_size] = '\0';
+			_splt = false;
 		};
 	};
 	void takeout(const char* v) {
@@ -1149,6 +1173,7 @@ public:
 				_str[i - _l] = _t[i];
 			_size -= _l;
 			_str[_size] = '\0';
+			_splt = false;
 		};
 	};
 	void takeout(std::string v) {
@@ -1163,6 +1188,7 @@ public:
 				_str[i - _l] = _t[i];
 			_size -= _l;
 			_str[_size] = '\0';
+			_splt = false;
 		};
 	};
 	void takeout(strinx v) {
@@ -1177,6 +1203,7 @@ public:
 				_str[i - _l] = _t[i];
 			_size -= _l;
 			_str[_size] = '\0';
+			_splt = false;
 		};
 	};
 	void takeout(int v) {
@@ -1192,6 +1219,7 @@ public:
 			_size -= _l;
 			_str[_size] = '\0';
 		};
+		_splt = false;
 	};
 	void takeout(float v) {
 		if (check(v)) {
@@ -1206,6 +1234,7 @@ public:
 			_size -= _l;
 			_str[_size] = '\0';
 		};
+		_splt = false;
 	};
 
 	void insert(char v) {
@@ -1216,6 +1245,7 @@ public:
 		for (volatile size_t i = 1; i < _size; i++)
 			_str[i] = _t[i];
 		_str[_size] = '\0';
+		_splt = false;
 	}
 	void insert(const char* v) {
 		const volatile char* _t = _str;
@@ -1227,6 +1257,7 @@ public:
 		for (volatile size_t i = _l; i < _size; i++)
 			_str[i] = _t[i];
 		_str[_size] = '\0';
+		_splt = false;
 	};
 	void insert(std::string v) {
 		const volatile char* _t = _str;
@@ -1238,6 +1269,7 @@ public:
 		for (volatile size_t i = _l; i < _size; i++)
 			_str[i] = _t[i];
 		_str[_size] = '\0';
+		_splt = false;
 	};
 	void insert(strinx v) {
 		const volatile char* _t = _str;
@@ -1249,6 +1281,7 @@ public:
 		for (volatile size_t i = _l; i < _size; i++)
 			_str[i] = _t[i];
 		_str[_size] = '\0';
+		_splt = false;
 	};
 	void insert(int v) {
 		const volatile char* _t = _str;
@@ -1261,6 +1294,7 @@ public:
 		for (volatile size_t i = _l; i < _size; i++)
 			_str[i] = _t[i];
 		_str[_size] = '\0';
+		_splt = false;
 	};
 	void insert(float v) {
 		const volatile char* _t = _str;
@@ -1273,6 +1307,7 @@ public:
 		for (volatile size_t i = _l; i < _size; i++)
 			_str[i] = _t[i];
 		_str[_size] = '\0';
+		_splt = false;
 	};
 
 	void insert(size_t j, char v) {
@@ -1285,6 +1320,7 @@ public:
 		for (volatile size_t i = j; i < _size; i++)
 			_str[i] = _t[i];
 		_str[_size] = '\0';
+		_splt = false;
 	};
 	void insert(size_t j, const char* v) {
 		const volatile char* _t = _str;
@@ -1298,6 +1334,7 @@ public:
 		for (volatile size_t i = j + _l; i < _size; i++)
 			_str[i] = _t[i];
 		_str[_size] = '\0';
+		_splt = false;
 	};
 	void insert(size_t j, std::string v) {
 		const volatile char* _t = _str;
@@ -1311,6 +1348,7 @@ public:
 		for (volatile size_t i = j + _l; i < _size; i++)
 			_str[i] = _t[i];
 		_str[_size] = '\0';
+		_splt = false;
 	};
 	void insert(size_t j, strinx v) {
 		const volatile char* _t = _str;
@@ -1324,6 +1362,7 @@ public:
 		for (volatile size_t i = j + _l; i < _size; i++)
 			_str[i] = _t[i];
 		_str[_size] = '\0';
+		_splt = false;
 	};
 	void insert(size_t j, int v) {
 		const volatile char* _t = _str;
@@ -1338,6 +1377,7 @@ public:
 		for (volatile size_t i = j + _l; i < _size; i++)
 			_str[i] = _t[i];
 		_str[_size] = '\0';
+		_splt = false;
 	};
 	void insert(size_t j, float v) {
 		const volatile char* _t = _str;
@@ -1352,6 +1392,7 @@ public:
 		for (volatile size_t i = j + _l; i < _size; i++)
 			_str[i] = _t[i];
 		_str[_size] = '\0';
+		_splt = false;
 	};
 
 	void replace(char v, char q)				{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
@@ -1399,4 +1440,10 @@ std::ostream& operator<<(std::ostream& os, const strinx& v) {
 	os << _v.c_str();
 	return os;
 };
-
+std::vector<strinx> operator""_split(const char* v, size_t) {
+	strinx t = v, s;
+	std::vector<strinx> m;
+	while (t >> s)
+		m.push_back(s);
+	return m;
+};
