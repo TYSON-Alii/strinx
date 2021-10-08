@@ -224,6 +224,7 @@ public:
 			while (c >> s)
 				_split.push_back(s);
 			_splt = true;
+			return _split;
 		}
 		else
 			return _split;
