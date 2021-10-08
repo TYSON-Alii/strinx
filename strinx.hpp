@@ -343,15 +343,15 @@ public:
 	void operator+=(std::initializer_list<float> v) { *this += strinx(v); _splt = false; };
 	void operator+=(std::initializer_list<const char*> v) { *this += strinx(v); _splt = false; };
 
-	strinx& operator<<(const char* v) { *this += v; return *this; };
-	strinx& operator<<(char v) { *this += v; return *this; };
-	strinx& operator<<(std::string v) { *this += v; return *this; };
-	strinx& operator<<(strinx v) { *this += v; return *this; };
-	strinx& operator<<(int v) { *this += v; return *this; };
-	strinx& operator<<(float v) { *this += v; return *this; };
-	strinx& operator<<(std::initializer_list<int> v) { *this += v; return *this; };
-	strinx& operator<<(std::initializer_list<float> v) { *this += v; return *this; };
-	strinx& operator<<(std::initializer_list<const char*> v) { *this += v; return *this; };
+	strinx& operator<<(const char* v) { *this += ' '; *this += v; return *this; };
+	strinx& operator<<(char v) { *this += ' '; *this += v; return *this; };
+	strinx& operator<<(std::string v) { *this += ' '; *this += v; return *this; };
+	strinx& operator<<(strinx v) { *this += ' '; *this += v; return *this; };
+	strinx& operator<<(int v) { *this += ' '; *this += v; return *this; };
+	strinx& operator<<(float v) { *this += ' '; *this += v; return *this; };
+	strinx& operator<<(std::initializer_list<int> v) { *this += ' '; *this += v; return *this; };
+	strinx& operator<<(std::initializer_list<float> v) { *this += ' '; *this += v; return *this; };
+	strinx& operator<<(std::initializer_list<const char*> v) { *this += ' '; *this += v; return *this; };
 
 	strinx& operator<(const char* v) { *this += v; return *this; };
 	strinx& operator<(char v) { *this += v; return *this; };
@@ -475,20 +475,22 @@ public:
 	template <typename T, typename ...TAIL>
 	strinx& format(const T& v, TAIL... tail) {
 		strinx c = *this;
-		strinx s;
-		clear();
+		c.reset();
+		strinx s, t;
 		while (c >> s) {
 			if (s == "{}") {
-				this->operator+=(v);
+				t += v;
+				std::cout << t << '\n';
 				format(tail...);
 			}
 			else
-				this->operator+=(s);
+				t += s;
 			if (c.canmove())
-				this->operator+=(' ');
+				t += ' ';
 		};
 		_splt = false;
-		return *this;
+		*this = t;
+		return t;
 	};
 
 	bool operator>>(strinx& v) {
