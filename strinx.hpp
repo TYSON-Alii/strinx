@@ -232,6 +232,59 @@ public:
 			return _split;
 	};
 
+	strinx random() {
+		strinx temp;
+		size_t p;
+		std::vector<size_t> ss;
+		for (size_t i = 0; i < _size; i++) {
+			p = rand() % _size;
+		_r:;
+			for (auto& j : ss)
+				if (j == p) {
+					p = rand() % _size;
+					goto _r;
+				};
+			ss.push_back(p);
+			temp += this->operator[](p);
+		}
+		_splt = false;
+		return temp;
+	};
+
+	void format() {};
+	template <typename T, typename ...TAIL>
+	strinx& format(const T& v, TAIL... tail) {
+		strinx c = *this;
+		c.reset();
+		strinx s, t;
+		while (c >> s) {
+			if (s == "{}") {
+				t += v;
+				std::cout << t << '\n';
+				format(tail...);
+			}
+			else
+				t += s;
+			if (c.canmove())
+				t += ' ';
+		};
+		_splt = false;
+		*this = t;
+		return t;
+	};
+
+	strinx title() {
+		strinx c = *this, s, t;
+		while (c >> s) {
+			s.reset();
+			s.up();
+			t += s;
+			if (c.canmove())
+				t += ' ';
+		}
+		return t;
+	};
+
 	bool starts_with(char v) {
 		if (_size > 0)
 			return _str[0] == v;
@@ -453,59 +506,6 @@ public:
 	strinx operator+(strinx v) { strinx _t = *this; _t += v; return _t; };
 	strinx operator+(int v) { strinx _t = *this; _t += v; return _t; };
 	strinx operator+(float v) { strinx _t = *this; _t += v; return _t; };
-
-	strinx random() {
-		strinx temp;
-		size_t p;
-		std::vector<size_t> ss;
-		for (size_t i = 0; i < _size; i++) {
-			p = rand() % _size;
-		_r:;
-			for (auto& j : ss)
-				if (j == p) {
-					p = rand() % _size;
-					goto _r;
-				};
-			ss.push_back(p);
-			temp += this->operator[](p);
-		}
-		_splt = false;
-		return temp;
-	};
-
-	void format() {};
-	template <typename T, typename ...TAIL>
-	strinx& format(const T& v, TAIL... tail) {
-		strinx c = *this;
-		c.reset();
-		strinx s, t;
-		while (c >> s) {
-			if (s == "{}") {
-				t += v;
-				std::cout << t << '\n';
-				format(tail...);
-			}
-			else
-				t += s;
-			if (c.canmove())
-				t += ' ';
-		};
-		_splt = false;
-		*this = t;
-		return t;
-	};
-
-	strinx title() {
-		strinx c = *this, s, t;
-		while (c >> s) {
-			s.reset();
-			s.up();
-			t += s;
-			if (c.canmove())
-				t += ' ';
-		}
-		return t;
-	};
 
 	bool operator>>(strinx& v) {
 		while (canmove()) {
@@ -996,6 +996,21 @@ public:
 		_splt = false;
 	};
 
+	strinx filter(char _find, char _change) {
+		strinx c = *this, t;
+		char ch;
+		while (c.get(ch))
+			t += ch == _find ? _change : ch;
+		return t;
+	};
+	strinx filter(const char* _find, char _change) {
+		strinx c = *this;
+		std::cout << c.scan(_find) << '\n';
+		while (c.scan(_find) > 0)
+			c.replace(_find, _change);
+		return c;
+	};
+
 	bool check(char v) {
 		for (size_t i = 0; i < _size; i++)
 			if (v == _str[i])
@@ -1005,13 +1020,12 @@ public:
 		return true;
 	};
 	bool check(const char* v) {
-		for (size_t i = 0; i < _size - strlen(v); i++)
-			for (size_t j = 0; j < strlen(v); j++)
-				if (v[i + j] == _str[i + j])
-					goto _true;
+		strinx _v = v;
+		const size_t s = _size - strlen(v), sl = strlen(v);
+		for (size_t i = 0; i < s; i++)
+			if (_v == this->operator()(i, i + sl))
+				return true;
 		return false;
-	_true:;
-		return true;
 	};
 	bool check(std::string v) {
 		for (size_t i = 0; i < _size - v.size(); i++)
@@ -1059,10 +1073,11 @@ public:
 	};
 	size_t scan(const char* v) {
 		size_t _c = 0;
-		for (size_t i = 0; i < _size - strlen(v); i++)
-			for (size_t j = 0; j < strlen(v); j++)
-				if (v[i + j] == _str[i + j])
-					_c++;
+		strinx _v = v;
+		const size_t s = _size - strlen(v), sl = strlen(v);
+		for (size_t i = 0; i < s; i++)
+			if (_v == this->operator()(i, i + sl))
+				_c++;
 		return _c;
 	};
 	size_t scan(std::string v) {
@@ -1109,14 +1124,14 @@ public:
 		return _c;
 	};
 	size_t find(const char* v) {
-		size_t _c = 0;
-		for (size_t i = 0; i < _size - strlen(v); i++)
-			for (size_t j = 0; j < strlen(v); j++)
-				if (v[i + j] == _str[i + j]) {
-					_c = i;
-					goto _true;
-				}
-	_true:;
+		size_t _c = -1;
+		strinx _v = v;
+		const size_t s = _size - strlen(v), sl = strlen(v);
+		for (size_t i = 0; i < s; i++)
+			if (_v == this->operator()(i, i + sl)) {
+				_c = i;
+				break;
+			};
 		return _c;
 	};
 	size_t find(std::string v) {
@@ -1180,16 +1195,9 @@ public:
 	};
 	void takeout(const char* v) {
 		if (check(v)) {
-			const volatile char* _t = _str;
-			const volatile size_t _l = strlen(v);
-			_str = new char[_size - _l + 1];
-			const volatile size_t _f = find(v);
-			for (volatile size_t i = 0; i < _f; i++)
-				_str[i] = _t[i];
-			for (volatile size_t i = _f + _l; i < _size; i++)
-				_str[i - _l] = _t[i];
-			_size -= _l;
-			_str[_size] = '\0';
+			const size_t _f = find(v), sl = strlen(v);
+			strinx c = *this;
+			*this = c(0, _f) + c(_f + sl, _size - 1);
 			_splt = false;
 		};
 	};
