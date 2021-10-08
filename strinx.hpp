@@ -15,7 +15,7 @@ private:
 	bool _splt = false;
 public:
 	friend std::ostream& operator<<(std::ostream& os, const strinx& v);
-	operator bool() { return _str[0] == '\0' ? false : true; };
+	operator bool() { return _size > 0 ? true : false; };
 	operator int() { return this->to_int(); };
 	operator float() { return this->to_float(); };
 	operator double() { return this->to_double(); };
@@ -62,9 +62,10 @@ public:
 		size_t size() { return _ss.size(); };
 		size_t lenght() { return _ss.size(); };
 	};
-	size_t size() { return _size; };
-	size_t lenght() { return _size; };
-	size_t len() { return _size; };
+	constexpr char* data() { return _str; };
+	constexpr size_t size() { return _size; };
+	constexpr size_t lenght() { return _size; };
+	constexpr size_t len() { return _size; };
 	char& front() { return _str[0]; };
 	char& back() { return _str[_size - 1]; };
 	char& first() { return _str[0]; };
@@ -204,6 +205,7 @@ public:
 				_t += _str[i];
 		return _t;
 	};
+	void print() { std::cout << c_str() << '\n'; };
 	void clear() { _str = (char*)'\0'; _size = 0; };
 	void resize(size_t v, char c = ' ') {
 		if (v < _size) {
@@ -490,6 +492,18 @@ public:
 		};
 		_splt = false;
 		*this = t;
+		return t;
+	};
+
+	strinx title() {
+		strinx c = *this, s, t;
+		while (c >> s) {
+			s.reset();
+			s.up();
+			t += s;
+			if (c.canmove())
+				t += ' ';
+		}
 		return t;
 	};
 
