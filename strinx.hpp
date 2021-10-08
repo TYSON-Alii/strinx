@@ -1466,7 +1466,8 @@ std::ostream& operator<<(std::ostream& os, const strinx& v) {
 	return os;
 };
 std::vector<strinx> operator""split(const char* v, size_t) {
-	strinx t = v, s;
+	strinx t = v;
+	strinx s;
 	std::vector<strinx> m;
 	while (t >> s)
 		m.push_back(s);
