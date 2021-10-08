@@ -6,6 +6,11 @@ using namespace std;
 
 int main() {
     strinx yazi = "cok duzgun bir yazi";
-    cout << yazi.random() << '\n'; // artik degil :c
+    cout << yazi.random() << '\n'; // artik degil
+    
+    yazi = "bu da cok kelimeli bi yazi"; // harbi oyle
+    for (auto i : yazi.split())
+        cout << i << '\n';
+    
     return 0;
 }
