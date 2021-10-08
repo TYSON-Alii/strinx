@@ -1433,14 +1433,14 @@ public:
 	void replace(float v, float q)				{ if (check(v)) { const size_t f = find(v); this->takeout(v); this->insert(f, q); }; };
 };
 typedef strinx stx;
-strinx operator""_stx(const char* v, size_t) { return strinx(v); };
-strinx operator""_stx(unsigned long long v) { return strinx(int(v)); };
+strinx operator""stx(const char* v, size_t) { return strinx(v); };
+strinx operator""stx(unsigned long long v) { return strinx(int(v)); };
 std::ostream& operator<<(std::ostream& os, const strinx& v) {
 	strinx _v = v;
 	os << _v.c_str();
 	return os;
 };
-std::vector<strinx> operator""_split(const char* v, size_t) {
+std::vector<strinx> operator""split(const char* v, size_t) {
 	strinx t = v, s;
 	std::vector<strinx> m;
 	while (t >> s)
