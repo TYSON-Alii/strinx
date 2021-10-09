@@ -295,6 +295,17 @@ public:
 		return t;
 	};
 
+	strinx strip() {
+		strinx c = *this, s, t;
+		c >> s;
+		c = c(c.iterator() - s.size(), c.size());
+		c.reset();
+		c.reverse();
+		c >> s;
+		t = c(c.iterator() - s.size(), c.size());
+		return t;
+	};
+
 	bool starts_with(const char& v) {
 		if (_size > 0)
 			return _str[0] == v;
