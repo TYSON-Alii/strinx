@@ -596,6 +596,33 @@ public:
 		else
 			return false;
 	};
+	bool operator>(char& v) {
+		if (canmove()) {
+			v = _str[_it];
+			return move();
+		}
+		else {
+			return false;
+		};
+	};
+	bool operator>(strinx& v) {
+		if (canmove()) {
+			v = _str[_it];
+			return move();
+		}
+		else {
+			return false;
+		};
+	};
+	bool operator>(std::string& v) {
+		if (canmove()) {
+			v = _str[_it];
+			return move();
+		}
+		else {
+			return false;
+		};
+	};
 	bool getline(strinx& v) {
 		v.clear();
 		if (canmoveline()) {
@@ -686,7 +713,7 @@ public:
 	strinx operator*(char v) {
 		strinx _t = *this, _j;
 		this->resize(_size);
-		for (volatile size_t i = 0; i < _size * 2; i += 2) {
+		for (size_t i = 0; i < _size * 2; i += 2) {
 			_j[i] = _t[i / 2];
 			_j[i + 1] = v;
 		};
@@ -695,7 +722,7 @@ public:
 	void operator*=(char v) {
 		strinx _t = *this;
 		this->resize(_size);
-		for (volatile size_t i = 0; i < _size * 2; i+=2) {
+		for (size_t i = 0; i < _size * 2; i+=2) {
 			_str[i] = _t[i/2];
 			_str[i+1] = v;
 		};
