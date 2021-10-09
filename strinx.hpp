@@ -142,7 +142,7 @@ public:
 	bool operator--() { return moveback(); };
 	const char* c_str() { return _str; };
 	std::string str() { return std::string(c_str()); };
-	strinx() {};
+	strinx() = default;
 	strinx(const strinx&) = default;
 	strinx(const char* v) { _str = strcat(_strdup(v), "\0"); _size = strlen(_str); };
 	strinx(char v) { _str = new char[2]{ v, '\0' }; _size = 1; };
@@ -999,15 +999,15 @@ public:
 	strinx filter(char _find, char _change) {
 		strinx c = *this, t;
 		char ch;
-		while (c.get(ch))
+		while (c.check(ch))
 			t += ch == _find ? _change : ch;
 		return t;
 	};
 	strinx filter(const char* _find, char _change) {
 		strinx c = *this;
-		std::cout << c.scan(_find) << '\n';
-		while (c.scan(_find) > 0)
+		while (c.check(_find)) {
 			c.replace(_find, _change);
+		}
 		return c;
 	};
 
@@ -1028,40 +1028,35 @@ public:
 		return false;
 	};
 	bool check(std::string v) {
-		for (size_t i = 0; i < _size - v.size(); i++)
-			for (size_t j = 0; j < v.size(); j++)
-				if (v[i + j] == _str[i + j])
-					goto _true;
+		strinx _v = v;
+		const size_t s = _size - v.size(), sl = v.size();
+		for (size_t i = 0; i < s; i++)
+			if (_v == this->operator()(i, i + sl))
+				return true;
 		return false;
-	_true:;
-		return true;
 	};
 	bool check(strinx v) {
-		for (size_t i = 0; i < _size - v.size(); i++)
-			for (size_t j = 0; j < v.size(); j++)
-				if (v[i + j] == _str[i + j])
-					goto _true;
+		const size_t s = _size - v.size(), sl = v.size();
+		for (size_t i = 0; i < s; i++)
+			if (v == this->operator()(i, i + sl))
+				return true;
 		return false;
-	_true:;
-		return true;
 	};
 	bool check(int v) {
-		for (size_t i = 0; i < _size - stx(v).size(); i++)
-			for (size_t j = 0; j < stx(v).size(); j++)
-				if (stx(v)[i + j] == _str[i + j])
-					goto _true;
+		strinx _v = v;
+		const size_t s = _size - _v.size(), sl = _v.size();
+		for (size_t i = 0; i < s; i++)
+			if (_v == this->operator()(i, i + sl))
+				return true;
 		return false;
-	_true:;
-		return true;
 	};
 	bool check(float v) {
-		for (size_t i = 0; i < _size - stx(v).size(); i++)
-			for (size_t j = 0; j < stx(v).size(); j++)
-				if (stx(v)[i + j] == _str[i + j])
-					goto _true;
+		strinx _v = v;
+		const size_t s = _size - _v.size(), sl = _v.size();
+		for (size_t i = 0; i < s; i++)
+			if (_v == this->operator()(i, i + sl))
+				return true;
 		return false;
-	_true:;
-		return true;
 	};
 
 	size_t scan(char v) {
@@ -1082,34 +1077,37 @@ public:
 	};
 	size_t scan(std::string v) {
 		size_t _c = 0;
-		for (size_t i = 0; i < _size - v.size(); i++)
-			for (size_t j = 0; j < v.size(); j++)
-				if (v[i + j] == _str[i + j])
-					_c++;
+		strinx _v = v;
+		const size_t s = _size - v.size(), sl = v.size();
+		for (size_t i = 0; i < s; i++)
+			if (_v == this->operator()(i, i + sl))
+				_c++;
 		return _c;
 	};
 	size_t scan(strinx v) {
 		size_t _c = 0;
-		for (size_t i = 0; i < _size - v.size(); i++)
-			for (size_t j = 0; j < v.size(); j++)
-				if (v[i + j] == _str[i + j])
-					_c++;
+		const size_t s = _size - v.size(), sl = v.size();
+		for (size_t i = 0; i < s; i++)
+			if (v == this->operator()(i, i + sl))
+				_c++;
 		return _c;
 	};
 	size_t scan(int v) {
 		size_t _c = 0;
-		for (size_t i = 0; i < _size - stx(v).size(); i++)
-			for (size_t j = 0; j < stx(v).size(); j++)
-				if (stx(v)[i + j] == _str[i + j])
-					_c++;
+		strinx _v = v;
+		const size_t s = _size - _v.size(), sl = _v.size();
+		for (size_t i = 0; i < s; i++)
+			if (_v == this->operator()(i, i + sl))
+				_c++;
 		return _c;
 	};
 	size_t scan(float v) {
 		size_t _c = 0;
-		for (size_t i = 0; i < _size - stx(v).size(); i++)
-			for (size_t j = 0; j < stx(v).size(); j++)
-				if (stx(v)[i + j] == _str[i + j])
-					_c++;
+		strinx _v = v;
+		const size_t s = _size - _v.size(), sl = _v.size();
+		for (size_t i = 0; i < s; i++)
+			if (_v == this->operator()(i, i + sl))
+				_c++;
 		return _c;
 	};
 
@@ -1125,71 +1123,63 @@ public:
 	};
 	size_t find(const char* v) {
 		size_t _c = -1;
-		strinx _v = v;
 		const size_t s = _size - strlen(v), sl = strlen(v);
 		for (size_t i = 0; i < s; i++)
-			if (_v == this->operator()(i, i + sl)) {
+			if (this->operator()(i, i + sl) == v) {
 				_c = i;
 				break;
 			};
 		return _c;
 	};
 	size_t find(std::string v) {
-		size_t _c = 0;
-		for (size_t i = 0; i < _size - v.size(); i++)
-			for (size_t j = 0; j < v.size(); j++)
-				if (v[i + j] == _str[i + j]) {
-					_c = i;
-					goto _true;
-				}
-	_true:;
+		size_t _c = -1;
+		const size_t s = _size - v.size(), sl = v.size();
+		for (size_t i = 0; i < s; i++)
+			if (this->operator()(i, i + sl) == v) {
+				_c = i;
+				break;
+			};
 		return _c;
 	};
 	size_t find(strinx v) {
-		size_t _c = 0;
-		for (size_t i = 0; i < _size - v.size(); i++)
-			for (size_t j = 0; j < v.size(); j++)
-				if (v[i + j] == _str[i + j]) {
-					_c = i;
-					goto _true;
-				}
-	_true:;
+		size_t _c = -1;
+		const size_t s = _size - v.size(), sl = v.size();
+		for (size_t i = 0; i < s; i++)
+			if (this->operator()(i, i + sl) == v) {
+				_c = i;
+				break;
+			};
 		return _c;
 	};
 	size_t find(int v) {
-		size_t _c = 0;
-		for (size_t i = 0; i < _size - stx(v).size(); i++)
-			for (size_t j = 0; j < stx(v).size(); j++)
-				if (stx(v)[i + j] == _str[i + j]) {
-					_c = i;
-					goto _true;
-				}
-	_true:;
+		size_t _c = -1;
+		strinx _v = v;
+		const size_t s = _size - _v.size(), sl = _v.size();
+		for (size_t i = 0; i < s; i++)
+			if (this->operator()(i, i + sl) == _v) {
+				_c = i;
+				break;
+			};
 		return _c;
 	};
 	size_t find(float v) {
-		size_t _c = 0;
-		for (size_t i = 0; i < _size - stx(v).size(); i++)
-			for (size_t j = 0; j < stx(v).size(); j++)
-				if (stx(v)[i + j] == _str[i + j]) {
-					_c = i;
-					goto _true;
-				}
-	_true:;
+		size_t _c = -1;
+		strinx _v = v;
+		const size_t s = _size - _v.size(), sl = _v.size();
+		for (size_t i = 0; i < s; i++)
+			if (this->operator()(i, i + sl) == _v) {
+				_c = i;
+				break;
+			};
 		return _c;
 	};
 
 	void takeout(char v) {
 		if (check(v)) {
-			const char* _t = _str;
-			_str = new char[_size];
-			const volatile size_t _f = find(v);
-			for (volatile size_t i = 0; i < _f; i++)
-				_str[i] = _t[i];
-			for (volatile size_t i = _f + 1; i < _size; i++)
-				_str[i - 1] = _t[i];
-			_size--;
-			_str[_size] = '\0';
+			const size_t _f = find(v);
+			strinx c = *this;
+			*this = c(0, _f);
+			*this += c(_f + 1, c.size());
 			_splt = false;
 		};
 	};
@@ -1197,226 +1187,134 @@ public:
 		if (check(v)) {
 			const size_t _f = find(v), sl = strlen(v);
 			strinx c = *this;
-			*this = c(0, _f) + c(_f + sl, _size - 1);
+			*this = c(0, _f);
+			*this += c(_f + sl, c.size());
 			_splt = false;
 		};
 	};
 	void takeout(std::string v) {
 		if (check(v)) {
-			const volatile char* _t = _str;
-			const volatile size_t _l = v.size();
-			_str = new char[_size - _l + 1];
-			const volatile size_t _f = find(v);
-			for (volatile size_t i = 0; i < _f; i++)
-				_str[i] = _t[i];
-			for (volatile size_t i = _f + _l; i < _size; i++)
-				_str[i - _l] = _t[i];
-			_size -= _l;
-			_str[_size] = '\0';
+			const size_t _f = find(v), sl = v.size();
+			strinx c = *this;
+			*this = c(0, _f);
+			*this += c(_f + sl, c.size());
 			_splt = false;
 		};
 	};
 	void takeout(strinx v) {
 		if (check(v)) {
-			const volatile char* _t = _str;
-			const volatile size_t _l = v.size();
-			_str = new char[_size - _l + 1];
-			const volatile size_t _f = find(v);
-			for (volatile size_t i = 0; i < _f; i++)
-				_str[i] = _t[i];
-			for (volatile size_t i = _f + _l; i < _size; i++)
-				_str[i - _l] = _t[i];
-			_size -= _l;
-			_str[_size] = '\0';
+			const size_t _f = find(v), sl = v.size();
+			strinx c = *this;
+			*this = c(0, _f);
+			*this += c(_f + sl, c.size());
 			_splt = false;
 		};
 	};
 	void takeout(int v) {
 		if (check(v)) {
-			const volatile char* _t = _str;
-			const volatile size_t _l = stx(v).size();
-			_str = new char[_size - _l + 1];
-			const volatile size_t _f = find(v);
-			for (volatile size_t i = 0; i < _f; i++)
-				_str[i] = _t[i];
-			for (volatile size_t i = _f + _l; i < _size; i++)
-				_str[i - _l] = _t[i];
-			_size -= _l;
-			_str[_size] = '\0';
+			const size_t _f = find(v), sl = strinx(v).size();
+			strinx c = *this;
+			*this = c(0, _f);
+			*this += c(_f + sl, c.size());
+			_splt = false;
 		};
-		_splt = false;
 	};
 	void takeout(float v) {
 		if (check(v)) {
-			const volatile char* _t = _str;
-			const volatile size_t _l = stx(v).size();
-			_str = new char[_size - _l + 1];
-			const volatile size_t _f = find(v);
-			for (volatile size_t i = 0; i < _f; i++)
-				_str[i] = _t[i];
-			for (volatile size_t i = _f + _l; i < _size; i++)
-				_str[i - _l] = _t[i];
-			_size -= _l;
-			_str[_size] = '\0';
+			const size_t _f = find(v), sl = strinx(v).size();
+			strinx c = *this;
+			*this = c(0, _f);
+			*this += c(_f + sl, c.size());
+			_splt = false;
 		};
-		_splt = false;
 	};
 
 	void insert(char v) {
-		const volatile char* _t = _str;
-		_str = new char[_size + 2];
-		_str[0] = v;
-		_size++;
-		for (volatile size_t i = 1; i < _size; i++)
-			_str[i] = _t[i];
-		_str[_size] = '\0';
+		strinx t = *this;
+		*this = _size > 0 ? t(0, _size) : strinx(v);
 		_splt = false;
 	}
 	void insert(const char* v) {
-		const volatile char* _t = _str;
-		const volatile size_t _l = strlen(v);
-		_str = new char[_size + _l + 1];
-		for (volatile size_t i = 0; i < _l; i++)
-			_str[i] = v[i];
-		_size += _l;
-		for (volatile size_t i = _l; i < _size; i++)
-			_str[i] = _t[i];
-		_str[_size] = '\0';
+		const size_t _l = strlen(v);
+		strinx t = *this;
+		*this = v;
+		*this += t(_l, _size);
 		_splt = false;
 	};
 	void insert(std::string v) {
-		const volatile char* _t = _str;
-		const volatile size_t _l = v.size();
-		_str = new char[_size + _l + 1];
-		for (volatile size_t i = 0; i < _l; i++)
-			_str[i] = v[i];
-		_size += _l;
-		for (volatile size_t i = _l; i < _size; i++)
-			_str[i] = _t[i];
-		_str[_size] = '\0';
+		const size_t _l = v.size();
+		strinx t = *this;
+		*this = v;
+		*this += t(_l, _size);
 		_splt = false;
 	};
 	void insert(strinx v) {
-		const volatile char* _t = _str;
-		const volatile size_t _l = v.size();
-		_str = new char[_size + _l + 1];
-		for (volatile size_t i = 0; i < _l; i++)
-			_str[i] = v[i];
-		_size += _l;
-		for (volatile size_t i = _l; i < _size; i++)
-			_str[i] = _t[i];
-		_str[_size] = '\0';
+		const size_t _l = v.size();
+		strinx t = *this;
+		*this = v;
+		*this += t(_l, _size);
 		_splt = false;
 	};
 	void insert(int v) {
-		const volatile char* _t = _str;
-		const volatile size_t _l = stx(v).size();
-		const std::string _s = stx(v);
-		_str = new char[_size + _l + 1];
-		for (volatile size_t i = 0; i < _l; i++)
-			_str[i] = _s[i];
-		_size += _l;
-		for (volatile size_t i = _l; i < _size; i++)
-			_str[i] = _t[i];
-		_str[_size] = '\0';
+		const size_t _l = strinx(v).size();
+		strinx t = *this;
+		*this = v;
+		*this += t(_l, _size);
 		_splt = false;
 	};
 	void insert(float v) {
-		const volatile char* _t = _str;
-		const volatile size_t _l = stx(v).size();
-		const std::string _s = stx(v);
-		_str = new char[_size + _l + 1];
-		for (volatile size_t i = 0; i < _l; i++)
-			_str[i] = _s[i];
-		_size += _l;
-		for (volatile size_t i = _l; i < _size; i++)
-			_str[i] = _t[i];
-		_str[_size] = '\0';
+		const size_t _l = strinx(v).size();
+		strinx t = *this;
+		*this = v;
+		*this += t(_l, _size);
 		_splt = false;
 	};
 
 	void insert(size_t j, char v) {
-		const volatile char* _t = _str;
-		_str = new char[_size + 2];
-		for (volatile size_t i = 1; i < j; i++)
-			_str[i] = _t[i];
-		_str[j] = v;
-		_size++;
-		for (volatile size_t i = j; i < _size; i++)
-			_str[i] = _t[i];
-		_str[_size] = '\0';
+		strinx t = *this;
+		*this = t(0, j);
+		*this += v;
+		*this += t(j, t.size());
 		_splt = false;
 	};
 	void insert(size_t j, const char* v) {
-		const volatile char* _t = _str;
-		const volatile size_t _l = strlen(v);
-		_str = new char[_size + _l + 1];
-		for (volatile size_t i = _l; i < j; i++)
-			_str[i] = _t[i];
-		for (volatile size_t i = 0; i < _l; i++)
-			_str[j + i] = v[i];
-		_size += _l;
-		for (volatile size_t i = j + _l; i < _size; i++)
-			_str[i] = _t[i];
-		_str[_size] = '\0';
+		const size_t _l = strlen(v);
+		strinx t = *this;
+		*this = t(0, j);
+		*this += v;
+		*this += t(j, _size);
 		_splt = false;
 	};
 	void insert(size_t j, std::string v) {
-		const volatile char* _t = _str;
-		const volatile size_t _l = v.size();
-		_str = new char[_size + _l + 1];
-		for (volatile size_t i = _l; i < j; i++)
-			_str[i] = _t[i];
-		for (volatile size_t i = 0; i < _l; i++)
-			_str[j + i] = v[i];
-		_size += _l;
-		for (volatile size_t i = j + _l; i < _size; i++)
-			_str[i] = _t[i];
-		_str[_size] = '\0';
+		const size_t _l = v.size();
+		strinx t = *this;
+		*this = t(0, j);
+		*this += v;
+		*this += t(j, _size);
 		_splt = false;
 	};
 	void insert(size_t j, strinx v) {
-		const volatile char* _t = _str;
-		const volatile size_t _l = v.size();
-		_str = new char[_size + _l + 1];
-		for (volatile size_t i = _l; i < j; i++)
-			_str[i] = _t[i];
-		for (volatile size_t i = 0; i < _l; i++)
-			_str[j + i] = v[i];
-		_size += _l;
-		for (volatile size_t i = j + _l; i < _size; i++)
-			_str[i] = _t[i];
-		_str[_size] = '\0';
+		const size_t _l = v.size();
+		strinx t = *this;
+		*this = t(0, j);
+		*this += v;
+		*this += t(j, _size);
 		_splt = false;
 	};
 	void insert(size_t j, int v) {
-		const volatile char* _t = _str;
-		const std::string _s = stx(v);
-		const volatile size_t _l = _s.size();
-		_str = new char[_size + _l + 1];
-		for (volatile size_t i = _l; i < j; i++)
-			_str[i] = _t[i];
-		for (volatile size_t i = 0; i < _l; i++)
-			_str[j + i] = _s[i];
-		_size += _l;
-		for (volatile size_t i = j + _l; i < _size; i++)
-			_str[i] = _t[i];
-		_str[_size] = '\0';
+		const size_t _l = strinx(v).size();
+		strinx t = *this;
+		*this = t(0, j);
+		*this += v;
+		*this += t(j, _size);
 		_splt = false;
 	};
 	void insert(size_t j, float v) {
-		const volatile char* _t = _str;
-		const std::string _s = stx(v);
-		const volatile size_t _l = _s.size();
-		_str = new char[_size + _l + 1];
-		for (volatile size_t i = _l; i < j; i++)
-			_str[i] = _t[i];
-		for (volatile size_t i = 0; i < _l; i++)
-			_str[j + i] = _s[i];
-		_size += _l;
-		for (volatile size_t i = j + _l; i < _size; i++)
-			_str[i] = _t[i];
-		_str[_size] = '\0';
+		const size_t _l = strinx(v).size();
+		strinx t = *this;
+		*this = t(0, j);
+		*this += v;
+		*this += t(j, _size);
 		_splt = false;
 	};
 
@@ -1466,8 +1364,7 @@ std::ostream& operator<<(std::ostream& os, const strinx& v) {
 	return os;
 };
 std::vector<strinx> operator""split(const char* v, size_t) {
-	strinx t = v;
-	strinx s;
+	strinx t = v, s;
 	std::vector<strinx> m;
 	while (t >> s)
 		m.push_back(s);
