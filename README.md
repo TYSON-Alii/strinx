@@ -22,7 +22,7 @@ int main() {
     strinx fikir = "Turkiye'de yoneticiler baskici ve gericidir.";
     fikir = fikir.filter("baskici", "#######");
     fikir = fikir.filter("gerici", "harika");
-    yazi.print();
+    fikir.print();
     
     return 0;
 }
