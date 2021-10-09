@@ -31,6 +31,7 @@ public:
 		};
 	public:
 		Split_it_t() { _ss.push_back(' '); _ss.push_back('\n'); _ss.push_back('\t'); };
+		void reset() { *this = Split_it_t(); };
 		bool operator()(char v) {
 			if (_is_in(v))
 				return false;
@@ -1023,6 +1024,9 @@ public:
 		_splt = false;
 	};
 
+	void pop_last() { *this = this->operator()(0, _size - 1); };
+	void pop_first() { *this = this->operator()(1, _size); };
+
 	strinx filter(char _find, char _change) {
 		strinx c = *this;
 		while (c.check(_find))
@@ -1208,7 +1212,6 @@ public:
 				break;
 			};
 		}
-	_true:;
 		return _c;
 	};
 	size_t find(const char* v) {
