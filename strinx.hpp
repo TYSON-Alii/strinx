@@ -288,6 +288,13 @@ public:
 		return t;
 	};
 
+	strinx reverse() {
+		strinx t;
+		for (int i = this->size() - 1; i >= 0; i--)
+			t += this->operator[](i);
+		return t;
+	};
+
 	bool starts_with(const char& v) {
 		if (_size > 0)
 			return _str[0] == v;
