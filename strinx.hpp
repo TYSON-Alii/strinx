@@ -209,7 +209,7 @@ public:
 	};
 	void print() { std::cout << c_str() << '\n'; };
 	void clear() { _str = (char*)'\0'; _size = 0; };
-	void resize(size_t v, char c = ' ') {
+	void resize(const size_t& v, char c = ' ') {
 		if (v < _size) {
 			strinx _c = *this;
 			*this = _c(0, v);
@@ -287,13 +287,13 @@ public:
 		return t;
 	};
 
-	bool starts_with(char v) {
+	bool starts_with(const char& v) {
 		if (_size > 0)
 			return _str[0] == v;
 		else
 			return false;
 	};
-	bool starts_with(const char* v) {
+	bool starts_with(const char*& v) {
 		if (_size > strlen(v))
 			return this->operator()(0, strlen(v)) == v;
 		else if (_size == strlen(v))
@@ -301,7 +301,7 @@ public:
 		else
 			return false;
 	};
-	bool starts_with(std::string v) {
+	bool starts_with(const std::string& v) {
 		if (_size > v.size())
 			return this->operator()(0, v.size() - 1) == v;
 		else if (_size == v.size())
@@ -309,7 +309,7 @@ public:
 		else
 			return false;
 	};
-	bool starts_with(strinx v) {
+	bool starts_with(const strinx& v) {
 		if (_size > v.size())
 			return this->operator()(0, v.size() - 1) == v;
 		else if (_size == v.size())
@@ -317,7 +317,7 @@ public:
 		else
 			return false;
 	};
-	bool starts_with(int v) {
+	bool starts_with(const int& v) {
 		if (_size > stx(v).size())
 			return this->operator()(0, stx(v).size() - 1) == v;
 		else if (_size == stx(v).size())
@@ -325,7 +325,7 @@ public:
 		else
 			return false;
 	};
-	bool starts_with(float v) {
+	bool starts_with(const float& v) {
 		if (_size > stx(v).size())
 			return this->operator()(0, stx(v).size() - 1) == v;
 		else if (_size == stx(v).size())
@@ -334,13 +334,13 @@ public:
 			return false;
 	};
 
-	bool ends_with(char v) {
+	bool ends_with(const char& v) {
 		if (_size > 0)
 			return _str[_size-1] == v;
 		else
 			return false;
 	};
-	bool ends_with(const char* v) {
+	bool ends_with(const char*& v) {
 		if (_size > strlen(v))
 			return this->operator()(_size - strlen(v), _size) == v;
 		else if (_size == strlen(v))
@@ -348,7 +348,7 @@ public:
 		else
 			return false;
 	};
-	bool ends_with(std::string v) {
+	bool ends_with(const std::string& v) {
 		if (_size > v.size())
 			return this->operator()(_size - v.size(), _size) == v;
 		else if (_size == v.size())
@@ -356,7 +356,7 @@ public:
 		else
 			return false;
 	};
-	bool ends_with(strinx v) {
+	bool ends_with(const strinx& v) {
 		if (_size > v.size())
 			return this->operator()(_size - v.size(), _size) == v;
 		else if (_size == v.size())
@@ -364,7 +364,7 @@ public:
 		else
 			return false;
 	};
-	bool ends_with(int v) {
+	bool ends_with(const int& v) {
 		if (_size > stx(v).size())
 			return this->operator()(_size - stx(v).size(), _size) == v;
 		else if (_size == stx(v).size())
@@ -372,7 +372,7 @@ public:
 		else
 			return false;
 	};
-	bool ends_with(float v) {
+	bool ends_with(const float& v) {
 		if (_size > stx(v).size())
 			return this->operator()(_size - stx(v).size(), _size) == v;
 		else if (_size == stx(v).size())
