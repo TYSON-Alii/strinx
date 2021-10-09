@@ -421,7 +421,7 @@ public:
 	strinx& operator<(std::initializer_list<const char*> v) { *this += v; return *this; };
 
 	bool operator==(char v) {
-		if (_str[0] == v)
+		if (_size == 1 && _str[0] == v)
 			return true;
 		return false;
 	};
