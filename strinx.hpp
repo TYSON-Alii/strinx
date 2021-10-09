@@ -144,12 +144,12 @@ public:
 	std::string str() { return std::string(c_str()); };
 	strinx() = default;
 	strinx(const strinx&) = default;
-	strinx(const char* v) { _str = strcat(_strdup(v), "\0"); _size = strlen(_str); };
-	strinx(char v) { _str = new char[2]{ v, '\0' }; _size = 1; };
-	strinx(std::string v) { _str = strcat(_strdup(v.c_str()), "\0"); _size = v.size(); };
-	strinx(int v) { _str = strcat(_strdup(stx(v).c_str()), "\0"); _size = strlen(_str); };
-	strinx(double v) { _str = strcat(_strdup(stx(v).c_str()), "\0"); _size = strlen(_str); };
-	strinx(float v) { _str = strcat(_strdup(stx(v).c_str()), "\0"); _size = strlen(_str); };
+	strinx(const char*& v) { _str = strcat(_strdup(v), "\0"); _size = strlen(_str); };
+	strinx(const char& v) { _str = new char[2]{ v, '\0' }; _size = 1; };
+	strinx(const std::string& v) { _str = strcat(_strdup(v.c_str()), "\0"); _size = v.size(); };
+	strinx(const int& v) { _str = strcat(_strdup(stx(v).c_str()), "\0"); _size = strlen(_str); };
+	strinx(const double& v) { _str = strcat(_strdup(stx(v).c_str()), "\0"); _size = strlen(_str); };
+	strinx(const float& v) { _str = strcat(_strdup(stx(v).c_str()), "\0"); _size = strlen(_str); };
 	strinx(std::initializer_list<int> v) {
 		strinx t;
 		t += '{';
@@ -192,10 +192,10 @@ public:
 		t += '}';
 		*this = t;
 	};
-	char& operator[](const size_t v) { return _str[v]; };
+	char& operator[](const size_t& v) { return _str[v]; };
 	strinx operator()() { return *this; };
-	strinx operator()(const size_t v) { return strinx(_str[v]); };
-	strinx operator()(const size_t begin, const size_t end) {
+	strinx operator()(const size_t& v) { return strinx(_str[v]); };
+	strinx operator()(const size_t& begin, const size_t& end) {
 		strinx _t;
 		if (begin < end)
 			for (size_t i = begin; i < end; i++)
