@@ -24,6 +24,11 @@ int main() {
     fikir = fikir.filter("gerici", "harika");
     fikir.print();
     
+    putchar('\n');
+    
+    strinx ters_yazi = "ad ub etsi izay zud"; // cok dogru
+    cout << ters_yazi.reverse() << '\n';
+    
     return 0;
 }
 ```
