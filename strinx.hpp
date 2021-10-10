@@ -302,9 +302,9 @@ public:
 		c >> s;
 		c = c(c.iterator() - s.size(), c.size());
 		c.reset();
-		c.reverse();
+		c = c.reverse();
 		c >> s;
-		t = c(c.iterator() - s.size(), c.size());
+		t = c(c.iterator() - s.size(), c.size()).reverse();
 		return t;
 	};
 
