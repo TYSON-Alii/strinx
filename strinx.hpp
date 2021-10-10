@@ -265,6 +265,15 @@ public:
 		return t;
 	};
 
+	strinx capitalize() {
+		strinx c = *this;
+		c.reset();
+		c.up();
+		return c;
+	};
+
+	strinx sort() { /*soon..*/ };
+
 	bool starts_with(char v) {
 		if (_size > 0)
 			return _str[0] == v;
