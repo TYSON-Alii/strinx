@@ -20,49 +20,6 @@ public:
 	operator float() { return this->to_float(); };
 	operator double() { return this->to_double(); };
 	operator std::string() { return this->str(); };
-	class Split_it_t {
-	private:
-		std::vector<char> _ss;
-		bool _is_in(char v) {
-			for (auto i : _ss)
-				if (i == v)
-					return true;
-			return false;
-		};
-	public:
-		Split_it_t() { _ss.push_back(' '); _ss.push_back('\n'); _ss.push_back('\t'); };
-		void reset() { *this = Split_it_t(); };
-		bool operator()(char v) {
-			if (_is_in(v))
-				return false;
-			else {
-				_ss.push_back(v);
-				return true;
-			};
-		};
-		bool del(char v) {
-			if (!_is_in(v))
-				for (volatile size_t i = 0; i < _ss.size(); i++)
-					if (_ss[i] == v) {
-						_ss.erase(_ss.begin() + i);
-						return true;
-					};
-			return false;
-		};
-		bool operator-=(char v) { return del(v); };
-		bool operator+=(char v) {
-			if (_is_in(v))
-				return false;
-			else {
-				_ss.push_back(v);
-				return true;
-			};
-		};
-		char& operator[](size_t v) { return _ss[v]; };
-		void print() { for (volatile size_t i = 0; i < _ss.size(); i++) { std::cout << _ss[i]; }; };
-		size_t size() { return _ss.size(); };
-		size_t lenght() { return _ss.size(); };
-	};
 	char* data() { return _str; };
 	size_t size() { return _size; };
 	size_t lenght() { return _size; };
@@ -72,7 +29,7 @@ public:
 	strinx first() { return strinx(_str[0]); };
 	strinx last() { return strinx(_str[_size - 1]); };
 	char& middle() { return _str[_size / 2]; };
-	Split_it_t split_it;
+	const char* split_it = " \n\t";
 	size_t& iterator() { return _it; };
 	void reset() { _it = 0; };
 	bool canmove() { return _it >= _size ? false : true; };
@@ -605,7 +562,7 @@ public:
 	bool operator>>(strinx& v) {
 		while (canmove()) {
 			volatile bool _y = false;
-			for (volatile size_t i = 0; i < split_it.size(); i++)
+			for (volatile size_t i = 0; i < strlen(split_it); i++)
 				if (_str[_it] == split_it[i])
 					_y = true;
 			if (_y)
@@ -617,7 +574,7 @@ public:
 			v.clear();
 			bool _y = false;
 			for (; canmove(); move()) {
-				for (volatile size_t i = 0; i < split_it.size(); i++)
+				for (volatile size_t i = 0; i < strlen(split_it); i++)
 					if (_str[_it] == split_it[i]) {
 						_y = true;
 					};
@@ -634,7 +591,7 @@ public:
 	bool operator>>(std::string& v) {
 		while (canmove()) {
 			volatile bool _y = false;
-			for (volatile size_t i = 0; i < split_it.size(); i++)
+			for (volatile size_t i = 0; i < strlen(split_it); i++)
 				if (_str[_it] == split_it[i])
 					_y = true;
 			if (_y)
@@ -646,7 +603,7 @@ public:
 			v.clear();
 			bool _y = false;
 			for (; canmove(); move()) {
-				for (volatile size_t i = 0; i < split_it.size(); i++)
+				for (volatile size_t i = 0; i < strlen(split_it); i++)
 					if (_str[_it] == split_it[i]) {
 						_y = true;
 					};
@@ -664,7 +621,7 @@ public:
 		std::string  _v;
 		while (canmove()) {
 			volatile bool _y = false;
-			for (volatile size_t i = 0; i < split_it.size(); i++)
+			for (volatile size_t i = 0; i < strlen(split_it); i++)
 				if (_str[_it] == split_it[i])
 					_y = true;
 			if (_y)
@@ -676,7 +633,7 @@ public:
 			_v.clear();
 			bool _y = false;
 			for (; canmove(); move()) {
-				for (volatile size_t i = 0; i < split_it.size(); i++)
+				for (volatile size_t i = 0; i < strlen(split_it); i++)
 					if (_str[_it] == split_it[i]) {
 						_y = true;
 					};
