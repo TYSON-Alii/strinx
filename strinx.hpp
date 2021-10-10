@@ -1219,6 +1219,14 @@ public:
 		else
 			return false;
 	};
+	bool remove(size_t begin, size_t end) {
+		if (end < _size and end > begin) {
+			*this = this->operator()(0, begin) + this->operator()(begin + end, _size);
+			return true;
+		}
+		else
+			return false;
+	};
 
 	size_t scan(char v) {
 		size_t _c = 0;
