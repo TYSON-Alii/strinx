@@ -63,14 +63,14 @@ public:
 		size_t size() { return _ss.size(); };
 		size_t lenght() { return _ss.size(); };
 	};
-	constexpr char* data() { return _str; };
-	constexpr size_t size() { return _size; };
-	constexpr size_t lenght() { return _size; };
-	constexpr size_t len() { return _size; };
+	char* data() { return _str; };
+	size_t size() { return _size; };
+	size_t lenght() { return _size; };
+	size_t len() { return _size; };
 	char& front() { return _str[0]; };
 	char& back() { return _str[_size - 1]; };
-	char& first() { return _str[0]; };
-	char& last() { return _str[_size - 1]; };
+	strinx first() { return strinx(_str[0]); };
+	strinx last() { return strinx(_str[_size - 1]); };
 	char& middle() { return _str[_size / 2]; };
 	Split_it_t split_it;
 	size_t& iterator() { return _it; };
@@ -145,12 +145,12 @@ public:
 	std::string str() { return std::string(c_str()); };
 	strinx() = default;
 	strinx(const strinx&) = default;
-	strinx(const char* v) { _str = strcat(_strdup(v), "\0"); _size = strlen(_str); };
-	strinx(char v) { _str = new char[2]{ v, '\0' }; _size = 1; };
-	strinx(std::string& v) { _str = strcat(_strdup(v.c_str()), "\0"); _size = v.size(); };
-	strinx(int v) { _str = strcat(_strdup(stx(v).c_str()), "\0"); _size = strlen(_str); };
-	strinx(double v) { _str = strcat(_strdup(stx(v).c_str()), "\0"); _size = strlen(_str); };
-	strinx(float v) { _str = strcat(_strdup(stx(v).c_str()), "\0"); _size = strlen(_str); };
+	strinx(const char* v)	{ strcpy(_str, _strdup(v)); _size = strlen(_str); };
+	strinx(char v)			{ strcpy(_str, new char[2]{ v, '\0' }); _size = 1; };
+	strinx(std::string& v)	{ strcpy(_str, _strdup(v.c_str())); _size = v.size(); };
+	strinx(int v)			{ strcpy(_str, _strdup(stx(v).c_str())); _size = strlen(_str); };
+	strinx(double v)		{ strcpy(_str, _strdup(stx(v).c_str())); _size = strlen(_str); };
+	strinx(float v)			{ strcpy(_str, _strdup(stx(v).c_str())); _size = strlen(_str); };
 	strinx(std::initializer_list<int> v) {
 		strinx t;
 		t += '{';
@@ -209,7 +209,7 @@ public:
 		return _t;
 	};
 	void print() { std::cout << c_str() << '\n'; };
-	void clear() { _str = (char*)'\0'; _size = 0; };
+	void clear() { memset(_str, 0, _size); _size = 0; };
 	void resize(const size_t& v, char c = ' ') {
 		if (v < _size) {
 			strinx _c = *this;
@@ -222,6 +222,8 @@ public:
 			_size = v;
 		};
 	};
+	void pop_last() { *this = _size > 0 ? this->operator()(0, _size - 1) : *this; };
+	void pop_first() { *this = _size > 0 ? this->operator()(1, _size) : *this; };
 	typedef std::vector<strinx> Split_t;
 	Split_t& split() {
 		if (!_splt) {
@@ -306,13 +308,13 @@ public:
 		return t;
 	};
 
-	bool starts_with(const char& v) {
+	bool starts_with(char v) {
 		if (_size > 0)
 			return _str[0] == v;
 		else
 			return false;
 	};
-	bool starts_with(const char*& v) {
+	bool starts_with(const char* v) {
 		if (_size > strlen(v))
 			return this->operator()(0, strlen(v)) == v;
 		else if (_size == strlen(v))
@@ -320,7 +322,7 @@ public:
 		else
 			return false;
 	};
-	bool starts_with(const std::string& v) {
+	bool starts_with(std::string v) {
 		if (_size > v.size())
 			return this->operator()(0, v.size() - 1) == v;
 		else if (_size == v.size())
@@ -336,7 +338,7 @@ public:
 		else
 			return false;
 	};
-	bool starts_with(const int& v) {
+	bool starts_with(int v) {
 		if (_size > stx(v).size())
 			return this->operator()(0, stx(v).size() - 1) == v;
 		else if (_size == stx(v).size())
@@ -344,7 +346,7 @@ public:
 		else
 			return false;
 	};
-	bool starts_with(const float& v) {
+	bool starts_with(float v) {
 		if (_size > stx(v).size())
 			return this->operator()(0, stx(v).size() - 1) == v;
 		else if (_size == stx(v).size())
@@ -353,13 +355,13 @@ public:
 			return false;
 	};
 
-	bool ends_with(const char& v) {
+	bool ends_with(char v) {
 		if (_size > 0)
 			return _str[_size-1] == v;
 		else
 			return false;
 	};
-	bool ends_with(const char*& v) {
+	bool ends_with(const char* v) {
 		if (_size > strlen(v))
 			return this->operator()(_size - strlen(v), _size) == v;
 		else if (_size == strlen(v))
@@ -367,7 +369,7 @@ public:
 		else
 			return false;
 	};
-	bool ends_with(const std::string& v) {
+	bool ends_with(std::string v) {
 		if (_size > v.size())
 			return this->operator()(_size - v.size(), _size) == v;
 		else if (_size == v.size())
@@ -383,7 +385,7 @@ public:
 		else
 			return false;
 	};
-	bool ends_with(const int& v) {
+	bool ends_with(int v) {
 		if (_size > stx(v).size())
 			return this->operator()(_size - stx(v).size(), _size) == v;
 		else if (_size == stx(v).size())
@@ -391,7 +393,7 @@ public:
 		else
 			return false;
 	};
-	bool ends_with(const float& v) {
+	bool ends_with(float v) {
 		if (_size > stx(v).size())
 			return this->operator()(_size - stx(v).size(), _size) == v;
 		else if (_size == stx(v).size())
@@ -400,21 +402,95 @@ public:
 			return false;
 	};
 
-	void operator=(char v) { _str = new char[2]{ v, '\0' }; _size = 1; _splt = false; };
-	void operator=(const char* v) { _str = _strdup(v); _size = strlen(v); _splt = false; };
-	void operator=(std::string v) { _str = _strdup(v.c_str()); _size = v.size(); _splt = false; };
-	void operator=(int v) { _str = _strdup(stx(v).c_str()); _size = strlen(_str); _splt = false; };
-	void operator=(float v) { _str = _strdup(stx(v).c_str()); _size = strlen(_str); _splt = false; };
+	void operator=(char v)			{ _str = new char[2]{ v, '\0' }; _size = 1; _splt = false; };
+	void operator=(const char* v)	{ _str = _strdup(v); _size = strlen(v); _splt = false; };
+	void operator=(std::string v)	{ _str = _strdup(v.c_str()); _size = v.size(); _splt = false; };
+	void operator=(int v)			{ _str = _strdup(stx(v).c_str()); _size = strlen(_str); _splt = false; };
+	void operator=(float v)			{ _str = _strdup(stx(v).c_str()); _size = strlen(_str); _splt = false; };
 	void operator=(std::initializer_list<int> v) { *this = strinx(v); _splt = false; };
 	void operator=(std::initializer_list<float> v) { *this = strinx(v); _splt = false; };
 	void operator=(std::initializer_list<const char*> v) { *this = strinx(v); _splt = false; };
 
-	void operator+=(const char* v) { (_size == 0) ? (_str = _strdup(v)) :  (_str = strcat(_str, v)); _size += strlen(v); _splt = false;};
-	void operator+=(char v) { (_size == 0) ? (_str = new char[2]{ v, '\0' }) : (_str = strcat(_str, new char[2]{ v, '\0' })); _size++; _splt = false;};
-	void operator+=(std::string v) { (_size == 0) ? (_str = _strdup(v.c_str())) : (_str = strcat(_str, v.c_str())); _size += v.size(); _splt = false;};
-	void operator+=(strinx v) { (_size == 0) ? (_str = _strdup(v.c_str())) : (_str = strcat(_str, v.c_str())); _size += v.size(); _splt = false; };
-	void operator+=(int v) { (_size == 0) ? (_str = _strdup(stx(v).c_str())) : (_str = strcat(_str, stx(v).c_str())); _size += stx(v).size(); _splt = false; };
-	void operator+=(float v) { (_size == 0) ? (_str = _strdup(stx(v).c_str())) : (_str = strcat(_str, stx(v).c_str())); _size += stx(v).size(); _splt = false; };
+	void operator+=(const char* v)	{
+		if (_size == 0)
+			_str = _strdup(v);
+		else {
+			const size_t s = _size + strlen(v);
+			char* c = new char[s]{0};
+			strncpy(c, (const char*)_str, _size);
+			strcat(c, v);
+			_str = c;
+		};
+		_size += strlen(v);
+		_splt = false;
+	};
+	void operator+=(char v) {
+		char* c = new char[2]{ v, '\0'};
+		if (_size == 0)
+			_str = c;
+		else {
+			char* c = new char[_size + 1]{ 0 };
+			strncpy(c, (const char*)_str, _size);
+			strcat(c, &v);
+			_str = c;
+		};
+		_size++;
+		_splt = false;
+	};
+	void operator+=(std::string v) {
+		if (_size == 0)
+			_str = _strdup(v.c_str());
+		else {
+			const size_t s = _size + v.size();
+			char* c = new char[s] {0};
+			strncpy(c, (const char*)_str, _size);
+			strcat(c, v.c_str());
+			_str = c;
+		};
+		_size += v.size();
+		_splt = false;
+	};
+	void operator+=(strinx v) {
+		if (_size == 0)
+			_str = _strdup(v.c_str());
+		else {
+			const size_t s = _size + v.size();
+			char* c = new char[s] {0};
+			strncpy(c, (const char*)_str, _size);
+			strcat(c, v.c_str());
+			_str = c;
+		};
+		_size += v.size();
+		_splt = false;
+	};
+	void operator+=(int v) {
+		const std::string f = stx(v);
+		if (_size == 0)
+			_str = _strdup(f.c_str());
+		else {
+			const size_t s = _size + f.size();
+			char* c = new char[s] {0};
+			strncpy(c, (const char*)_str, _size);
+			strcat(c, f.c_str());
+			_str = c;
+		};
+		_size += f.size();
+		_splt = false;
+	};
+	void operator+=(float v) {
+		const std::string f = stx(v);
+		if (_size == 0)
+			_str = _strdup(f.c_str());
+		else {
+			const size_t s = _size + f.size();
+			char* c = new char[s] {0};
+			strncpy(c, (const char*)_str, _size);
+			strcat(c, f.c_str());
+			_str = c;
+		};
+		_size += f.size();
+		_splt = false;
+	};
 	void operator+=(std::initializer_list<int> v) { *this += strinx(v); _splt = false; };
 	void operator+=(std::initializer_list<float> v) { *this += strinx(v); _splt = false; };
 	void operator+=(std::initializer_list<const char*> v) { *this += strinx(v); _splt = false; };
@@ -1042,13 +1118,12 @@ public:
 		_splt = false;
 	};
 
-	void pop_last() { *this = this->operator()(0, _size - 1); };
-	void pop_first() { *this = this->operator()(1, _size); };
-
 	strinx filter(char _find, char _change) {
 		strinx c = *this;
-		while (c.check(_find))
+		while (c.check(_find)) {
+			std::cout << c << '\n';
 			c.replace(_find, _change);
+		};
 		return c;
 	};
 	strinx filter(const char* _find, char _change) {
@@ -1120,12 +1195,12 @@ public:
 	};
 
 	bool check(char v) {
-		for (size_t i = 0; i < _size; i++)
-			if (v == _str[i])
-				goto _true;
+		for (size_t i = 0; i < _size; i++) {
+			if (v == _str[i]) {
+				return true;
+			};
+		};
 		return false;
-	_true:;
-		return true;
 	};
 	bool check(const char* v) {
 		 size_t s = _size - strlen(v), sl = strlen(v);
@@ -1229,7 +1304,7 @@ public:
 				_c = i;
 				break;
 			};
-		}
+		};
 		return _c;
 	};
 	size_t find(const char* v) {
@@ -1328,7 +1403,7 @@ public:
 	};
 	void takeout(int v) {
 		if (check(v)) {
-			const size_t _f = find(v), sl = strinx(v).size();
+			const size_t _f = find(v), sl = stx(v).size();
 			strinx c = *this;
 			*this = c(0, _f);
 			*this += c(_f + sl, c.size());
@@ -1337,7 +1412,7 @@ public:
 	};
 	void takeout(float v) {
 		if (check(v)) {
-			const size_t _f = find(v), sl = strinx(v).size();
+			const size_t _f = find(v), sl = stx(v).size();
 			strinx c = *this;
 			*this = c(0, _f);
 			*this += c(_f + sl, c.size());
@@ -1347,42 +1422,38 @@ public:
 
 	void insert(char v) {
 		strinx t = *this;
-		*this = _size > 0 ? t(0, _size) : strinx(v);
+		*this = v;
+		*this += t;
 		_splt = false;
 	}
 	void insert(const char* v) {
-		const size_t _l = strlen(v);
 		strinx t = *this;
 		*this = v;
-		*this += t(_l, t.size());
+		*this += t;
 		_splt = false;
 	};
 	void insert(std::string v) {
-		const size_t _l = v.size();
 		strinx t = *this;
 		*this = v;
-		*this += t(_l, t.size());
+		*this += t;
 		_splt = false;
 	};
 	void insert(strinx v) {
-		const size_t _l = v.size();
 		strinx t = *this;
 		*this = v;
-		*this += t(_l, t.size());
+		*this += t;
 		_splt = false;
 	};
 	void insert(int v) {
-		const size_t _l = strinx(v).size();
 		strinx t = *this;
 		*this = v;
-		*this += t(_l, t.size());
+		*this += t;
 		_splt = false;
 	};
 	void insert(float v) {
-		const size_t _l = strinx(v).size();
 		strinx t = *this;
 		*this = v;
-		*this += t(_l, t.size());
+		*this += t;
 		_splt = false;
 	};
 
@@ -1394,7 +1465,6 @@ public:
 		_splt = false;
 	};
 	void insert(size_t j, const char* v) {
-		const size_t _l = strlen(v);
 		strinx t = *this;
 		*this = t(0, j);
 		*this += v;
@@ -1402,7 +1472,6 @@ public:
 		_splt = false;
 	};
 	void insert(size_t j, std::string v) {
-		const size_t _l = v.size();
 		strinx t = *this;
 		*this = t(0, j);
 		*this += v;
@@ -1410,7 +1479,6 @@ public:
 		_splt = false;
 	};
 	void insert(size_t j, strinx v) {
-		const size_t _l = v.size();
 		strinx t = *this;
 		*this = t(0, j);
 		*this += v;
@@ -1418,7 +1486,6 @@ public:
 		_splt = false;
 	};
 	void insert(size_t j, int v) {
-		const size_t _l = strinx(v).size();
 		strinx t = *this;
 		*this = t(0, j);
 		*this += v;
@@ -1426,7 +1493,6 @@ public:
 		_splt = false;
 	};
 	void insert(size_t j, float v) {
-		const size_t _l = strinx(v).size();
 		strinx t = *this;
 		*this = t(0, j);
 		*this += v;
