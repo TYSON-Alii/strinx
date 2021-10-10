@@ -21,9 +21,9 @@ public:
 	operator double() { return this->to_double(); };
 	operator std::string() { return this->str(); };
 	char* data() { return _str; };
-	size_t size() { return _size; };
-	size_t lenght() { return _size; };
-	size_t len() { return _size; };
+	constexpr size_t size() { return _size; };
+	constexpr size_t lenght() { return _size; };
+	constexpr size_t len() { return _size; };
 	char& front() { return _str[0]; };
 	char& back() { return _str[_size - 1]; };
 	strinx first() { return strinx(_str[0]); };
@@ -1209,6 +1209,15 @@ public:
 				return true;
 		}
 		return false;
+	};
+
+	bool remove(size_t v) {
+		if (v < _size) {
+			*this = this->operator()(0, v) + this->operator()(v + 1, _size);
+			return true;
+		}
+		else
+			return false;
 	};
 
 	size_t scan(char v) {
