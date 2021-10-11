@@ -1281,7 +1281,7 @@ public:
 	};
 
 	size_t find(char v) {
-		size_t _c = 0;
+		size_t _c = _size;
 		for (size_t i = 0; i < _size; i++) {
 			if (v == _str[i]) {
 				_c = i;
@@ -1291,7 +1291,7 @@ public:
 		return _c;
 	};
 	size_t find(const char* v) {
-		size_t _c = -1;
+		size_t _c = _size;
 		const size_t s = _size - strlen(v), sl = strlen(v);
 		for (size_t i = 0; i < s; i++) {
 			if (this->operator()(i, i + sl) == v) {
@@ -1302,7 +1302,7 @@ public:
 		return _c;
 	};
 	size_t find(std::string v) {
-		size_t _c = -1;
+		size_t _c = _size;
 		const size_t s = _size - v.size(), sl = v.size();
 		for (size_t i = 0; i < s; i++) {
 			if (this->operator()(i, i + sl) == v) {
@@ -1313,7 +1313,7 @@ public:
 		return _c;
 	};
 	size_t find(strinx v) {
-		size_t _c = -1;
+		size_t _c = _size;
 		const size_t s = _size - v.size(), sl = v.size();
 		for (size_t i = 0; i < s; i++) {
 			if (this->operator()(i, i + sl) == v) {
@@ -1324,7 +1324,7 @@ public:
 		return _c;
 	};
 	size_t find(int v) {
-		size_t _c = -1;
+		size_t _c = _size;
 		strinx _v = v;
 		const size_t s = _size - _v.size(), sl = _v.size();
 		for (size_t i = 0; i < s; i++) {
@@ -1336,7 +1336,7 @@ public:
 		return _c;
 	};
 	size_t find(float v) {
-		size_t _c = -1;
+		size_t _c = _size;
 		strinx _v = v;
 		const size_t s = _size - _v.size(), sl = _v.size();
 		for (size_t i = 0; i < s; i++) {
