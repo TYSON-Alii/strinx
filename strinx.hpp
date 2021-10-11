@@ -274,6 +274,14 @@ public:
 
 	strinx sort() { /*soon..*/ };
 
+	void swap(const size_t& _first, const size_t& _second) {
+		if (_first < _size and _second < _size) {
+			const char ch1 = _str[_first], ch2 = _str[_second];
+			_str[_first] = ch2;
+			_str[_second] = ch1;
+		};
+	};
+
 	bool starts_with(char v) {
 		if (_size > 0)
 			return _str[0] == v;
