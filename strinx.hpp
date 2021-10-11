@@ -153,15 +153,15 @@ public:
 	char& operator[](const size_t& v) { return _str[v]; };
 	strinx operator()() { return *this; };
 	strinx operator()(const size_t& v) { return strinx(_str[v]); };
-	strinx operator()(const size_t& begin, const size_t& end) {
+	strinx operator()(const size_t& begin, const size_t& end, const size_t& u = 1) {
 		strinx _t;
 		if (begin < end)
-			for (size_t i = begin; i < end; i++)
+			for (size_t i = begin; i < end; i+=u)
 				_t += _str[i];
 		else if (begin == end)
 			_t = _str[begin];
 		else
-			for (size_t i = begin; i > end; i--)
+			for (size_t i = begin; i > end; i-=u)
 				_t += _str[i];
 		return _t;
 	};
