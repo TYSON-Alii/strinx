@@ -282,6 +282,11 @@ public:
 		};
 	};
 
+	void fill(char v) {
+		for (size_t i = 0; i < _size; i++)
+			_str[i] = v;
+	};
+
 	bool starts_with(char v) {
 		if (_size > 0)
 			return _str[0] == v;
