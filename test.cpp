@@ -6,7 +6,11 @@ using namespace std;
 
 int main() {
     strinx yazi;
-    yazi += "yazilar yazilar";
+    yazi += "yaziiii ";     // ok
+    yazi += 67.f;           // ok
+    yazi -= 6;              // takeout
+    yazi = yazi(3, 8);      // elements 3 to 8
+    yazi *= 3;              // multiply
     yazi.back();            // char&: first element
     yazi.canmove();         // bool: can move iterator
     yazi.canmoveback();     // bool: cam move back iterator
