@@ -11,11 +11,13 @@ int main() {
     yazi.canmove(); // bool: can move iterator
     yazi.canmoveback(); // bool: cam move back iterator
     yazi.canmoveline(); // bool: can move line iterator
+    yazi.capitalize(); // strinx: capitalize
     yazi.check('a'); // bool: check if value in
     yazi.clear(); // void: clear all element
     yazi.c_str(); // const char*: convert const char*
     yazi.data(); // char&: returning char*
     yazi.ends_with(".png"); // bool: check if it ends with value
+    yazi.fill('a'); // void: fill all elements
     yazi.filter('a', "#"); // strinx: replace all value
     yazi.find('a'); // size_t: find value pos 
     yazi.first(); // strinx: first element
@@ -47,7 +49,9 @@ int main() {
     yazi.split(); // std::vector<strinx>&:
     yazi.starts_with('!'); // bool: check if it starts with value
     yazi.str(); // string: convert string
-    yazi.strip(); // soon..
+    yazi.strip(); // strinx: strip
+    yazi.swap(); // void: swap two element
+    yazi.sort(); // soon..
     yazi.takeout("%&?*/#$"); // void: erase value
     yazi.title(); // strinx: make title
     yazi.to_double(); // double: convert double
@@ -55,6 +59,7 @@ int main() {
     yazi.to_int(); // int: convert int
     yazi.up(); // bool: upper case current char
     yazi.upper(); // strinx: upper case all elements
+    yazi.wrap(); // soon..
     
     return 0;
 }
