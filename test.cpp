@@ -30,12 +30,14 @@ int main() {
     yazi.last(); // strinx: last element
     yazi.len(); // size_t&: lenght
     yazi.lenght(); // size_t&: lenght
+    yazi.linesplit(); // soon..
     yazi.low(); // bool: lower case current char
     yazi.lower(); // strinx: lower case all elements
     yazi.middle(); // char&: middle element
     yazi.move(); // bool: move iterator
     yazi.moveback(); // bool: move back iterator
     yazi.numbers(); // strinx: find all number
+    yazi.parse(); // soon..
     yazi.pop_first(); // void: remove first element
     yazi.pop_last(); // void: remove las element
     yazi.print(); // void: print
@@ -52,7 +54,7 @@ int main() {
     yazi.strip(); // strinx: strip
     yazi.swap(); // void: swap two element
     yazi.sort(); // soon..
-    yazi.takeout("%&?*/#$"); // void: erase value
+    yazi.takeout("%&?*/#$"); // void: take out value
     yazi.title(); // strinx: make title
     yazi.to_double(); // double: convert double
     yazi.to_float(); // float: convert float
