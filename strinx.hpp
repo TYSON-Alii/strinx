@@ -16,6 +16,7 @@ private:
 public:
 	friend std::ostream& operator<<(std::ostream& os, const strinx& v);
 	operator bool() { return _size > 0 ? true : false; };
+	bool operator!() { return _size > 0 ? true : false; };
 	operator int() { return this->to_int(); };
 	operator float() { return this->to_float(); };
 	operator double() { return this->to_double(); };
@@ -102,12 +103,12 @@ public:
 	std::string str() { return std::string(c_str()); };
 	strinx() = default;
 	strinx(const strinx&) = default;
-	strinx(const char* v)	{ strcpy(_str, _strdup(v)); _size = strlen(_str); };
-	strinx(char v)			{ strcpy(_str, new char[2]{ v, '\0' }); _size = 1; };
-	strinx(std::string& v)	{ strcpy(_str, _strdup(v.c_str())); _size = v.size(); };
-	strinx(int v)			{ strcpy(_str, _strdup(stx(v).c_str())); _size = strlen(_str); };
-	strinx(double v)		{ strcpy(_str, _strdup(stx(v).c_str())); _size = strlen(_str); };
-	strinx(float v)			{ strcpy(_str, _strdup(stx(v).c_str())); _size = strlen(_str); };
+	strinx(const char* v)	{ _str = _strdup(v); _size = strlen(_str); };
+	strinx(char v)			{ _str = new char[2]{ v, '\0' }; _size = 1; };
+	strinx(std::string& v)	{ _str = _strdup(v.c_str()); _size = v.size(); };
+	strinx(int v)			{ _str = _strdup(stx(v).c_str()); _size = strlen(_str); };
+	strinx(double v)		{ _str = _strdup(stx(v).c_str()); _size = strlen(_str); };
+	strinx(float v)			{ _str = _strdup(stx(v).c_str()); _size = strlen(_str); };
 	strinx(std::initializer_list<int> v) {
 		strinx t;
 		t += '{';
@@ -165,7 +166,7 @@ public:
 				_t += _str[i];
 		return _t;
 	};
-	void print() { std::cout << c_str() << '\n'; };
+	void print() { std::cout << _str << '\n'; };
 	void clear() { memset(_str, 0, _size); _size = 0; };
 	void resize(const size_t& v, char c = ' ') {
 		if (v < _size) {
@@ -212,6 +213,8 @@ public:
 		_splt = false;
 		return temp;
 	};
+
+	strinx random_word() { /*soon..*/ };
 
 	void format() {};
 	template <typename T, typename ...TAIL>
@@ -286,6 +289,25 @@ public:
 		for (size_t i = 0; i < _size; i++)
 			_str[i] = v;
 	};
+
+	void wrap(const size_t max, char ch = '\n') {
+		/*if (_size > max) {
+			strinx c = this->c_str(), t;
+			c.print();
+			char s;
+			this->clear();
+			while (c > s) {
+				t += s;
+				if (t.size() > max) {
+					*this += t + ch;
+					t.clear();
+				};
+			};
+			*this += t;
+		};*/
+	};
+
+
 
 	bool starts_with(char v) {
 		if (_size > 0)
