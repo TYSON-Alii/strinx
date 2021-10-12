@@ -8,7 +8,7 @@ int main() {
     strinx yazi;
     yazi += "yaziiii ";     // ok
     yazi += 67.f;           // ok
-    yazi -= 6;              // takeout
+    yazi -= 6;              // takeout 6
     yazi = yazi(3, 8);      // elements 3 to 8
     yazi *= 3;              // multiply
     yazi.back();            // char&: first element
