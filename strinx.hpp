@@ -1116,38 +1116,38 @@ public:
 		_splt = false;
 	};
 
-	strinx filter(char _find, char _change) {
+	strinx filter(char _find, char  _change) {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
 	};
-	strinx filter(const char* _find, char _change) {
+	strinx filter(char _find, const char* _change) {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
 	};
-	strinx filter(std::string _find, char _change) {
+	strinx filter(char _find, std::string _change) {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
 	};
-	strinx filter(strinx _find, char _change) {
+	strinx filter(char _find, strinx  _change) {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
 	};
-	strinx filter(int _find, char _change) {
+	strinx filter(char _find, int  _change) {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
 	};
-	strinx filter(float _find, char _change) {
+	strinx filter(char _find, float _change) {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
 	};
 
-	strinx filter(char _find, const char* _change) {
+	strinx filter(const char* _find, char  _change) {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
@@ -1157,22 +1157,22 @@ public:
 		while (c.replace(_find, _change));
 		return c;
 	};
-	strinx filter(std::string _find, const char* _change) {
+	strinx filter(const char* _find, std::string _change) {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
 	};
-	strinx filter(strinx _find, const char* _change) {
+	strinx filter(const char* _find, strinx  _change) {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
 	};
-	strinx filter(int _find, const char* _change) {
+	strinx filter(const char* _find, int  _change) {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
 	};
-	strinx filter(float _find, const char* _change) {
+	strinx filter(const char* _find, float _change) {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
@@ -1301,6 +1301,13 @@ public:
 		while (c.replace(_find, _change));
 		return c;
 	};
+
+	void erase(char v) { while (takeout(v)); };
+	void erase(const char* v) { while (takeout(v)); };
+	void erase(std::string v) { while (takeout(v)); };
+	void erase(strinx v) { while (takeout(v)); };
+	void erase(int v) { while (takeout(v)); };
+	void erase(float v) { while (takeout(v)); };
 
 	bool check(char v) {
 		for (size_t i = 0; i < _size; i++) {
@@ -1490,59 +1497,77 @@ public:
 		return _c;
 	};
 
-	void takeout(char v) {
+	bool takeout(char v) {
 		if (check(v)) {
 			const size_t _f = find(v);
 			strinx c = *this;
 			*this = c(0, _f);
 			*this += c(_f + 1, c.size());
 			_splt = false;
-		};
+			return true;
+		}
+		else
+			return false;
 	};
-	void takeout(const char* v) {
+	bool takeout(const char* v) {
 		if (check(v)) {
 			const size_t _f = find(v), sl = strlen(v);
 			strinx c = *this;
 			*this = c(0, _f);
 			*this += c(_f + sl, c.size());
 			_splt = false;
-		};
+			return true;
+		}
+		else
+			return false;
 	};
-	void takeout(std::string v) {
+	bool takeout(std::string v) {
 		if (check(v)) {
 			const size_t _f = find(v), sl = v.size();
 			strinx c = *this;
 			*this = c(0, _f);
 			*this += c(_f + sl, c.size());
 			_splt = false;
-		};
+			return true;
+		}
+		else
+			return false;
 	};
-	void takeout(strinx v) {
+	bool takeout(strinx v) {
 		if (check(v)) {
 			const size_t _f = find(v), sl = v.size();
 			strinx c = *this;
 			*this = c(0, _f);
 			*this += c(_f + sl, c.size());
 			_splt = false;
-		};
+			return true;
+		}
+		else
+			return false;
 	};
-	void takeout(int v) {
+	bool takeout(int v) {
 		if (check(v)) {
 			const size_t _f = find(v), sl = stx(v).size();
 			strinx c = *this;
 			*this = c(0, _f);
 			*this += c(_f + sl, c.size());
 			_splt = false;
-		};
+			return true;
+		}
+		else
+			return false;
 	};
-	void takeout(float v) {
+	bool takeout(float v) {
 		if (check(v)) {
 			const size_t _f = find(v), sl = stx(v).size();
 			strinx c = *this;
 			*this = c(0, _f);
 			*this += c(_f + sl, c.size());
 			_splt = false;
-		};
+			return true;
+		}
+		else
+			return false;
 	};
 
 	void insert(char v) {
