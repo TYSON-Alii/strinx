@@ -225,7 +225,6 @@ public:
 		while (c >> s) {
 			if (s == "{}") {
 				t += v;
-				std::cout << t << '\n';
 				format(tail...);
 			}
 			else
@@ -306,8 +305,6 @@ public:
 			*this += t;
 		};*/
 	};
-
-
 
 	bool starts_with(char v) {
 		if (_size > 0)
@@ -1176,6 +1173,130 @@ public:
 		return c;
 	};
 	strinx filter(float _find, const char* _change) {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+
+	strinx filter(std::string _find, char  _change) {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+	strinx filter(std::string _find, const char*  _change) {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+	strinx filter(std::string _find, std::string _change) {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+	strinx filter(std::string _find, strinx  _change) {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+	strinx filter(std::string _find, int  _change) {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+	strinx filter(std::string _find, float _change) {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+
+	strinx filter(strinx _find, char  _change) {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+	strinx filter(strinx _find, const char* _change) {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+	strinx filter(strinx _find, std::string _change) {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+	strinx filter(strinx _find, strinx  _change) {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+	strinx filter(strinx _find, int  _change) {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+	strinx filter(strinx _find, float _change) {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+
+	strinx filter(int _find, char  _change) {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+	strinx filter(int _find, const char* _change) {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+	strinx filter(int _find, std::string _change) {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+	strinx filter(int _find, strinx  _change) {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+	strinx filter(int _find, int  _change) {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+	strinx filter(int _find, float _change) {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+
+	strinx filter(float _find, char  _change) {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+	strinx filter(float _find, const char* _change) {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+	strinx filter(float _find, std::string _change) {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+	strinx filter(float _find, strinx  _change) {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+	strinx filter(float _find, int  _change) {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+	strinx filter(float _find, float _change) {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
