@@ -161,7 +161,6 @@ public:
 				const size_t s = end - begin;
 				char* c = new char[s + 1] {0};
 				strncpy(c, &_str[begin], s);
-				std::cout << c << '\n';
 				_t = (const char*)c;
 			}
 			else
