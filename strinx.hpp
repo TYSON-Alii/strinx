@@ -157,8 +157,16 @@ public:
 	strinx operator()(const size_t& begin, const size_t& end, const size_t& u = 1) {
 		strinx _t;
 		if (begin < end)
-			for (size_t i = begin; i < end; i+=u)
-				_t += _str[i];
+			if (u == 1) {
+				const size_t s = end - begin;
+				char* c = new char[s + 1] {0};
+				strncpy(c, &_str[begin], s);
+				std::cout << c << '\n';
+				_t = (const char*)c;
+			}
+			else
+				for (size_t i = begin; i < end; i += u)
+					_t += _str[i];
 		else if (begin == end)
 			_t = _str[begin];
 		else
