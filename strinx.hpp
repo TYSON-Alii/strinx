@@ -291,12 +291,6 @@ public:
 		};
 	};
 
-	void fill(char v) {
-		char* c = new char[_size]{ 0 };
-		strncpy(c, (const char*)_str, _size);
-		_str = c;
-	};
-
 	void wrap(const size_t max, char ch = '\n') {
 		/*if (_size > max) {
 			strinx c = this->c_str(), t;
@@ -1122,6 +1116,39 @@ public:
 			}
 		}
 		_splt = false;
+	};
+
+	void fill(char v) {
+		char* c = new char[_size] { 0 };
+		strncpy(c, (const char*)_str, _size);
+		_str = c;
+	};
+	void fill(const char* v) {
+		clear();
+		for (size_t i = 0; i < _size; i++)
+			*this += v;
+	};
+	void fill(std::string v) {
+		clear();
+		for (size_t i = 0; i < _size; i++)
+			*this += v;
+	};
+	void fill(strinx v) {
+		clear();
+		for (size_t i = 0; i < _size; i++)
+			*this += v;
+	};
+	void fill(int v) {
+		clear();
+		strinx q = v;
+		for (size_t i = 0; i < _size; i++)
+			*this += q;
+	};
+	void fill(float v) {
+		clear();
+		strinx q = v;
+		for (size_t i = 0; i < _size; i++)
+			*this += q;
 	};
 
 	strinx filter(char _find, char  _change) {
