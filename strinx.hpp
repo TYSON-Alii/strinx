@@ -292,8 +292,9 @@ public:
 	};
 
 	void fill(char v) {
-		for (size_t i = 0; i < _size; i++)
-			_str[i] = v;
+		char* c = new char[_size]{ 0 };
+		strncpy(c, (const char*)_str, _size);
+		_str = c;
 	};
 
 	void wrap(const size_t max, char ch = '\n') {
