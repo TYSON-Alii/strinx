@@ -1,6 +1,7 @@
 #include <sstream>
 #include <vector>
 
+class strinx;
 class strinx{
 private:
 	char* _str = new char[1]{'\0'};
@@ -9,8 +10,6 @@ private:
 	std::string stx(float v) { std::stringstream ss; ss << v; return ss.str(); };
 	std::string stx(double v) { std::stringstream ss; ss << v; return ss.str(); };
 	std::string stx(int v) { return std::to_string(v); };
-	std::string stx(char v) { std::stringstream ss; ss << v; return ss.str(); };
-	std::string stx(const char* v) { return std::string(v); };
 	std::vector<strinx> _split;
 	bool _splt = false;
 public:
@@ -221,7 +220,7 @@ public:
 		return temp;
 	};
 
-	strinx random_word() { /*soon..*/ };
+	strinx random_split() { /*soon..*/ };
 
 	void format() {};
 	template <typename T, typename ...TAIL>
@@ -1412,14 +1411,14 @@ public:
 			return false;
 	};
 
-	size_t scan(char v) {
+	size_t index(char v) {
 		size_t _c = 0;
 		for (size_t i = 0; i < _size; i++)
 			if (v == _str[i])
 				_c++;
 		return _c;
 	};
-	size_t scan(const char* v) {
+	size_t index(const char* v) {
 		size_t _c = 0;
 		strinx _v = v;
 		const size_t s = _size - strlen(v), sl = strlen(v);
@@ -1428,7 +1427,7 @@ public:
 				_c++;
 		return _c;
 	};
-	size_t scan(std::string v) {
+	size_t index(std::string v) {
 		size_t _c = 0;
 		strinx _v = v;
 		const size_t s = _size - v.size(), sl = v.size();
@@ -1437,7 +1436,7 @@ public:
 				_c++;
 		return _c;
 	};
-	size_t scan(strinx v) {
+	size_t index(strinx v) {
 		size_t _c = 0;
 		const size_t s = _size - v.size(), sl = v.size();
 		for (size_t i = 0; i < s; i++)
@@ -1445,7 +1444,7 @@ public:
 				_c++;
 		return _c;
 	};
-	size_t scan(int v) {
+	size_t index(int v) {
 		size_t _c = 0;
 		strinx _v = v;
 		const size_t s = _size - _v.size(), sl = _v.size();
@@ -1454,7 +1453,7 @@ public:
 				_c++;
 		return _c;
 	};
-	size_t scan(float v) {
+	size_t index(float v) {
 		size_t _c = 0;
 		strinx _v = v;
 		const size_t s = _size - _v.size(), sl = _v.size();
