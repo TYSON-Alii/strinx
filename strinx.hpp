@@ -15,7 +15,7 @@ private:
 public:
 	friend std::ostream& operator<<(std::ostream& os, const strinx& v);
 	operator bool() { return _size > 0 ? true : false; };
-	bool operator!() { return _size > 0 ? true : false; };
+	bool operator!() { return _size > 0 ? false : true; };
 	operator int() { return this->to_int(); };
 	operator float() { return this->to_float(); };
 	operator double() { return this->to_double(); };
@@ -222,7 +222,7 @@ public:
 
 	strinx random_split() { /*soon..*/ };
 
-	void format() {};
+	void format() {  };
 	template <typename T, typename ...TAIL>
 	strinx& format(const T& v, TAIL... tail) {
 		strinx c = *this;
@@ -240,7 +240,7 @@ public:
 		};
 		_splt = false;
 		*this = t;
-		return t;
+		return *this;
 	};
 
 	strinx title() {
