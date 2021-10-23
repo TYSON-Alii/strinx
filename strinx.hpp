@@ -151,6 +151,21 @@ public:
 		*this = t;
 	};
 	char& operator[](const size_t& v) { return _str[v]; };
+	strinx operator[](std::initializer_list<size_t> v) {
+		strinx t;
+		for (const auto& i : v) if (i < _size) t += _str[i];
+		return t;
+	};
+	strinx operator[](std::vector<size_t> v) {
+		strinx t;
+		for (const auto& i : v) if (i < _size) t += _str[i];
+		return t;
+	};
+	strinx operator[](std::vector<int> v) {
+		strinx t;
+		for (const auto& i : v) if (i < _size) t += _str[i];
+		return t;
+	};
 	strinx operator()() { return *this; };
 	strinx operator()(const size_t& v) { return strinx(_str[v]); };
 	strinx operator()(const size_t& begin, const size_t& end, const size_t& u = 1) {
