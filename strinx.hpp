@@ -20,6 +20,7 @@ public:
 	operator float() { return this->to_float(); };
 	operator double() { return this->to_double(); };
 	operator std::string() { return this->str(); };
+	operator char*() { return _str; };
 	char* data() { return _str; };
 	constexpr size_t size() { return _size; };
 	constexpr size_t lenght() { return _size; };
