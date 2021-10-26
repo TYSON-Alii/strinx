@@ -1,6 +1,7 @@
 #include <sstream>
 #include <vector>
 
+#define _XS_STRINX_
 class strinx;
 class strinx{
 private:
@@ -152,6 +153,7 @@ public:
 		*this = t;
 	};
 	char& operator[](const size_t& v) { return _str[v]; };
+	char& operator[](const int& v) { return (v >= 0) ? _str[size_t(v)] : _str[_size + v]; };
 	strinx operator[](std::initializer_list<size_t> v) {
 		strinx t;
 		for (const auto& i : v) if (i < _size) t += _str[i];
