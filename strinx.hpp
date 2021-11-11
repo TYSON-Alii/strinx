@@ -8,35 +8,35 @@ private:
 	char* _str = new char[1]{'\0'};
 	size_t _size = 0;
 	size_t _it = 0;
-	std::string stx(float v) { std::stringstream ss; ss << v; return ss.str(); };
-	std::string stx(double v) { std::stringstream ss; ss << v; return ss.str(); };
-	std::string stx(int v) { return std::to_string(v); };
+	static std::string stx(float v) { std::stringstream ss; ss << v; return ss.str(); };
+	static std::string stx(double v) { std::stringstream ss; ss << v; return ss.str(); };
+	static std::string stx(int v) { return std::to_string(v); };
 	std::vector<strinx> _split;
 	bool _splt = false;
 public:
 	friend std::ostream& operator<<(std::ostream& os, const strinx& v);
-	operator bool() { return _size > 0 ? true : false; };
-	bool operator!() { return _size > 0 ? false : true; };
-	operator int() { return this->to_int(); };
-	operator float() { return this->to_float(); };
-	operator double() { return this->to_double(); };
-	operator std::string() { return this->str(); };
-	operator char*() { return _str; };
-	char* data() { return _str; };
-	constexpr size_t size() { return _size; };
-	constexpr size_t lenght() { return _size; };
-	constexpr size_t len() { return _size; };
-	char& front() { return _str[0]; };
-	char& back() { return _str[_size - 1]; };
-	strinx first() { return strinx(_str[0]); };
-	strinx last() { return strinx(_str[_size - 1]); };
-	char& middle() { return _str[_size / 2]; };
+	operator bool() const { return _size > 0 ? true : false; };
+	bool operator!() const { return _size > 0 ? false : true; };
+	operator int() const { return std::stoi(_str); };
+	operator float() const { return std::stof(_str); };
+	operator double() const { return std::stod(_str); };
+	operator std::string() const { return std::string(_str); };
+	operator char*() const { return _str; };
+	char* data() const { return _str; };
+	size_t size() const { return _size; };
+	size_t lenght() const { return _size; };
+	size_t len() const { return _size; };
+	char& front() const { return _str[0]; };
+	char& back() const { return _str[_size - 1]; };
+	strinx first() const { return strinx(_str[0]); };
+	strinx last() const { return strinx(_str[_size - 1]); };
+	char& middle() const { return _str[_size / 2]; };
 	const char* split_it = " \n\t";
 	size_t& iterator() { return _it; };
 	void reset() { _it = 0; };
-	bool canmove() { return _it >= _size ? false : true; };
-	bool canmoveback() { return _it == 0 ? false : true; };
-	bool canmoveline() {
+	bool canmove() const { return _it >= _size ? false : true; };
+	bool canmoveback() const { return _it == 0 ? false : true; };
+	bool canmoveline() const {
 		if (canmove()) {
 			for (volatile size_t _i = _it; ; _i++) {
 				if (_i >= _size)
@@ -100,8 +100,8 @@ public:
 	}*/
 	bool operator++() { return move(); };
 	bool operator--() { return moveback(); };
-	const char* c_str() { return _str; };
-	std::string str() { return std::string(c_str()); };
+	const char* c_str() const { return _str; };
+	std::string str() const { return std::string(_str); };
 	strinx() = default;
 	strinx(const strinx&) = default;
 	strinx(const char* v)	{ _str = _strdup(v); _size = strlen(_str); };
@@ -152,8 +152,8 @@ public:
 		t += '}';
 		*this = t;
 	};
-	char& operator[](const size_t& v) { return _str[v]; };
-	char& operator[](const int& v) { return (v >= 0) ? _str[size_t(v)] : _str[_size + v]; };
+	char& operator[](const size_t& v) const { return _str[v]; };
+	char& operator[](const int& v) const { return (v >= 0) ? _str[size_t(v)] : _str[_size - v]; };
 	strinx operator[](std::initializer_list<size_t> v) {
 		strinx t;
 		for (const auto& i : v) if (i < _size) t += _str[i];
@@ -169,9 +169,9 @@ public:
 		for (const auto& i : v) if (i < _size) t += _str[i];
 		return t;
 	};
-	strinx operator()() { return *this; };
-	strinx operator()(const size_t& v) { return strinx(_str[v]); };
-	strinx operator()(const size_t& begin, const size_t& end, const size_t& u = 1) {
+	strinx operator()() const { return *this; };
+	strinx operator()(const size_t& v) const { return strinx(_str[v]); };
+	strinx operator()(const size_t& begin, const size_t& end, const size_t& u = 1) const {
 		strinx _t;
 		if (begin < end)
 			if (u == 1) {
@@ -190,7 +190,7 @@ public:
 				_t += _str[i];
 		return _t;
 	};
-	void print() { std::cout << _str << '\n'; };
+	void print() const { std::cout << _str << '\n'; };
 	void clear() { memset(_str, 0, _size); _size = 0; };
 	void resize(const size_t& v, char c = ' ') {
 		if (v < _size) {
@@ -219,7 +219,7 @@ public:
 			return _split;
 	};
 
-	strinx random() {
+	strinx random() const {
 		strinx temp;
 		size_t p;
 		std::vector<size_t> ss;
@@ -234,11 +234,8 @@ public:
 			ss.push_back(p);
 			temp += this->operator[](p);
 		}
-		_splt = false;
 		return temp;
 	};
-
-	strinx random_split() { /*soon..*/ };
 
 	void format() {  };
 	template <typename T, typename ...TAIL>
@@ -261,7 +258,7 @@ public:
 		return *this;
 	};
 
-	strinx title() {
+	strinx title() const {
 		strinx c = *this, s, t;
 		while (c >> s) {
 			s.reset();
@@ -269,18 +266,18 @@ public:
 			t += s;
 			if (c.canmove())
 				t += ' ';
-		}
+		};
 		return t;
 	};
 
-	strinx reverse() {
+	strinx reverse() const {
 		strinx t;
 		for (int i = this->size() - 1; i >= 0; i--)
 			t += this->operator[](i);
 		return t;
 	};
 
-	strinx strip() {
+	strinx strip() const {
 		strinx c = *this, s, t;
 		c >> s;
 		c = c(c.iterator() - s.size(), c.size());
@@ -291,14 +288,18 @@ public:
 		return t;
 	};
 
-	strinx capitalize() {
+	strinx capitalize() const {
 		strinx c = *this;
 		c.reset();
 		c.up();
 		return c;
 	};
 
-	strinx sort() { /*soon..*/ };
+	strinx random_split() const { /*soon..*/ };
+
+	std::vector<strinx> linesplit() const { /*soon..*/ };
+
+	strinx sort() const { /*soon..*/ };
 
 	void swap(const size_t& _first, const size_t& _second) {
 		if (_first < _size and _second < _size) {
@@ -325,13 +326,13 @@ public:
 		};*/
 	};
 
-	bool starts_with(char v) {
+	bool starts_with(char v) const {
 		if (_size > 0)
 			return _str[0] == v;
 		else
 			return false;
 	};
-	bool starts_with(const char* v) {
+	bool starts_with(const char* v) const {
 		if (_size > strlen(v))
 			return this->operator()(0, strlen(v)) == v;
 		else if (_size == strlen(v))
@@ -339,7 +340,7 @@ public:
 		else
 			return false;
 	};
-	bool starts_with(std::string v) {
+	bool starts_with(std::string v) const {
 		if (_size > v.size())
 			return this->operator()(0, v.size() - 1) == v;
 		else if (_size == v.size())
@@ -347,7 +348,7 @@ public:
 		else
 			return false;
 	};
-	bool starts_with(strinx v) {
+	bool starts_with(strinx v) const {
 		if (_size > v.size())
 			return this->operator()(0, v.size() - 1) == v;
 		else if (_size == v.size())
@@ -355,7 +356,7 @@ public:
 		else
 			return false;
 	};
-	bool starts_with(int v) {
+	bool starts_with(int v) const {
 		if (_size > stx(v).size())
 			return this->operator()(0, stx(v).size() - 1) == v;
 		else if (_size == stx(v).size())
@@ -363,7 +364,7 @@ public:
 		else
 			return false;
 	};
-	bool starts_with(float v) {
+	bool starts_with(float v) const {
 		if (_size > stx(v).size())
 			return this->operator()(0, stx(v).size() - 1) == v;
 		else if (_size == stx(v).size())
@@ -372,13 +373,13 @@ public:
 			return false;
 	};
 
-	bool ends_with(char v) {
+	bool ends_with(char v) const {
 		if (_size > 0)
 			return _str[_size-1] == v;
 		else
 			return false;
 	};
-	bool ends_with(const char* v) {
+	bool ends_with(const char* v) const {
 		if (_size > strlen(v))
 			return this->operator()(_size - strlen(v), _size) == v;
 		else if (_size == strlen(v))
@@ -386,7 +387,7 @@ public:
 		else
 			return false;
 	};
-	bool ends_with(std::string v) {
+	bool ends_with(std::string v) const {
 		if (_size > v.size())
 			return this->operator()(_size - v.size(), _size) == v;
 		else if (_size == v.size())
@@ -394,7 +395,7 @@ public:
 		else
 			return false;
 	};
-	bool ends_with(strinx v) {
+	bool ends_with(strinx v) const {
 		if (_size > v.size())
 			return this->operator()(_size - v.size(), _size) == v;
 		else if (_size == v.size())
@@ -402,7 +403,7 @@ public:
 		else
 			return false;
 	};
-	bool ends_with(int v) {
+	bool ends_with(int v) const {
 		if (_size > stx(v).size())
 			return this->operator()(_size - stx(v).size(), _size) == v;
 		else if (_size == stx(v).size())
@@ -410,7 +411,7 @@ public:
 		else
 			return false;
 	};
-	bool ends_with(float v) {
+	bool ends_with(float v) const {
 		if (_size > stx(v).size())
 			return this->operator()(_size - stx(v).size(), _size) == v;
 		else if (_size == stx(v).size())
@@ -532,12 +533,12 @@ public:
 	strinx& operator<(std::initializer_list<float> v) { *this += v; return *this; };
 	strinx& operator<(std::initializer_list<const char*> v) { *this += v; return *this; };
 
-	bool operator==(char v) {
+	bool operator==(char v) const {
 		if (_size == 1 && _str[0] == v)
 			return true;
 		return false;
 	};
-	bool operator==(const char* v) {
+	bool operator==(const char* v) const {
 		if (_size == strlen(v)) {
 			for (size_t i = 0; i < _size; i++)
 				if (_str[i] == v[i]);
@@ -547,7 +548,7 @@ public:
 		};
 		return false;
 	};
-	bool operator==(std::string v) {
+	bool operator==(std::string v) const {
 		if (_size == v.size()) {
 			for (size_t i = 0; i < _size; i++)
 				if (_str[i] == v[i]);
@@ -557,7 +558,7 @@ public:
 		};
 		return false;
 	}
-	bool operator==(int v) {
+	bool operator==(int v) const {
 		if (_size == stx(v).size()) {
 			size_t _c = 0;
 			for (size_t i = 0; i < _size; i++)
@@ -569,7 +570,7 @@ public:
 		};
 		return false;
 	}
-	bool operator==(float v) {
+	bool operator==(float v) const {
 		if (_size == stx(v).size()) {
 			size_t _c = 0;
 			for (size_t i = 0; i < _size; i++)
@@ -581,7 +582,7 @@ public:
 		};
 		return false;
 	}
-	bool operator==(strinx v) {
+	bool operator==(strinx v) const {
 		if (_size == v.size()) {
 			for (size_t i = 0; i < _size; i++)
 				if (_str[i] == v[i]);
@@ -592,11 +593,11 @@ public:
 		return false;
 	}
 
-	bool operator!=(char v) { return !(*this == v); };
-	bool operator!=(const char* v) { return !(*this == v); };
-	bool operator!=(std::string v) { return !(*this == v); };
-	bool operator!=(int v) { return !(*this == v); };
-	bool operator!=(float v) { return !(*this == v); };
+	bool operator!=(char v) const { return !(*this == v); };
+	bool operator!=(const char* v) const { return !(*this == v); };
+	bool operator!=(std::string v) const { return !(*this == v); };
+	bool operator!=(int v) const { return !(*this == v); };
+	bool operator!=(float v) const { return !(*this == v); };
 
 	void operator-=(char v) { takeout(v); };
 	void operator-=(const char* v) { takeout(v); };
@@ -605,19 +606,19 @@ public:
 	void operator-=(int v) { takeout(v); };
 	void operator-=(float v) { takeout(v); };
 
-	strinx operator-(char v) { strinx _t = *this; _t.takeout(v); return _t; };
-	strinx operator-(const char* v) { strinx _t = *this; _t.takeout(v); false; return _t; };
-	strinx operator-(std::string v) { strinx _t = *this; _t.takeout(v); return _t; };
-	strinx operator-(strinx v) { strinx _t = *this; _t.takeout(v); return _t; };
-	strinx operator-(int v) { strinx _t = *this; _t.takeout(v); return _t; };
-	strinx operator-(float v) { strinx _t = *this; _t.takeout(v); return _t; };
+	strinx operator-(char v) const { strinx _t = *this; _t.takeout(v); return _t; };
+	strinx operator-(const char* v) const { strinx _t = *this; _t.takeout(v); false; return _t; };
+	strinx operator-(std::string v) const { strinx _t = *this; _t.takeout(v); return _t; };
+	strinx operator-(strinx v) const { strinx _t = *this; _t.takeout(v); return _t; };
+	strinx operator-(int v) const { strinx _t = *this; _t.takeout(v); return _t; };
+	strinx operator-(float v) const { strinx _t = *this; _t.takeout(v); return _t; };
 
-	strinx operator+(char v) { strinx _t = *this; _t += v; return _t; };
-	strinx operator+(const char* v) { strinx _t = *this; _t += v; return _t; };
-	strinx operator+(std::string v) { strinx _t = *this; _t += v; return _t; };
-	strinx operator+(strinx v) { strinx _t = *this; _t += v; return _t; };
-	strinx operator+(int v) { strinx _t = *this; _t += v; return _t; };
-	strinx operator+(float v) { strinx _t = *this; _t += v; return _t; };
+	strinx operator+(char v) const { strinx _t = *this; _t += v; return _t; };
+	strinx operator+(const char* v) const { strinx _t = *this; _t += v; return _t; };
+	strinx operator+(std::string v) const { strinx _t = *this; _t += v; return _t; };
+	strinx operator+(strinx v) const { strinx _t = *this; _t += v; return _t; };
+	strinx operator+(int v) const { strinx _t = *this; _t += v; return _t; };
+	strinx operator+(float v) const { strinx _t = *this; _t += v; return _t; };
 
 	bool operator>>(strinx& v) {
 		while (canmove()) {
@@ -809,7 +810,7 @@ public:
 		};
 	};
 
-	strinx operator*(size_t v) {
+	strinx operator*(size_t v) const {
 		strinx _t;
 		for (volatile size_t i = 0; i < v; i++)
 			_t += *this;
@@ -822,9 +823,8 @@ public:
 			*this += _t;
 		_splt = false;
 	};
-	strinx operator*(char v) {
+	strinx operator*(char v) const {
 		strinx _t = *this, _j;
-		this->resize(_size);
 		for (size_t i = 0; i < _size * 2; i += 2) {
 			_j[i] = _t[i / 2];
 			_j[i + 1] = v;
@@ -841,11 +841,11 @@ public:
 		_splt = false;
 	};
 
-	float to_float() { return std::stof(_str); };
-	int to_int() { return std::stoi(_str); };
-	double to_double() { return std::stof(_str); };
+	float to_float() const { return std::stof(_str); };
+	int to_int() const { return std::stoi(_str); };
+	double to_double() const { return std::stof(_str); };
 
-	strinx upper() {
+	strinx upper() const {
 		strinx _t = *this;
 		for (size_t i = 0; i < _size; i++) {
 			switch (_t[i]) {
@@ -879,7 +879,7 @@ public:
 		}
 		return _t;
 	};
-	strinx lower() {
+	strinx lower() const {
 		strinx _t = *this;
 		for (size_t i = 0; i < _size; i++) {
 			switch (_t[i]) {
@@ -913,7 +913,7 @@ public:
 		}
 		return _t;
 	};
-	strinx numbers() {
+	strinx numbers() const {
 		strinx _t;
 		for (size_t i = 0; i < _size; i++) {
 			switch (_str[i]) {
@@ -1168,187 +1168,187 @@ public:
 			*this += q;
 	};
 
-	strinx filter(char _find, char  _change) {
+	strinx filter(char _find, char  _change) const {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
 	};
-	strinx filter(char _find, const char* _change) {
+	strinx filter(char _find, const char* _change) const {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
 	};
-	strinx filter(char _find, std::string _change) {
+	strinx filter(char _find, std::string _change) const {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
 	};
-	strinx filter(char _find, strinx  _change) {
+	strinx filter(char _find, strinx  _change) const {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
 	};
-	strinx filter(char _find, int  _change) {
+	strinx filter(char _find, int  _change) const {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
 	};
-	strinx filter(char _find, float _change) {
-		strinx c = *this;
-		while (c.replace(_find, _change));
-		return c;
-	};
-
-	strinx filter(const char* _find, char  _change) {
-		strinx c = *this;
-		while (c.replace(_find, _change));
-		return c;
-	};
-	strinx filter(const char* _find, const char* _change) {
-		strinx c = *this;
-		while (c.replace(_find, _change));
-		return c;
-	};
-	strinx filter(const char* _find, std::string _change) {
-		strinx c = *this;
-		while (c.replace(_find, _change));
-		return c;
-	};
-	strinx filter(const char* _find, strinx  _change) {
-		strinx c = *this;
-		while (c.replace(_find, _change));
-		return c;
-	};
-	strinx filter(const char* _find, int  _change) {
-		strinx c = *this;
-		while (c.replace(_find, _change));
-		return c;
-	};
-	strinx filter(const char* _find, float _change) {
+	strinx filter(char _find, float _change) const {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
 	};
 
-	strinx filter(std::string _find, char  _change) {
+	strinx filter(const char* _find, char  _change) const {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
 	};
-	strinx filter(std::string _find, const char*  _change) {
+	strinx filter(const char* _find, const char* _change) const {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
 	};
-	strinx filter(std::string _find, std::string _change) {
+	strinx filter(const char* _find, std::string _change) const {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
 	};
-	strinx filter(std::string _find, strinx  _change) {
+	strinx filter(const char* _find, strinx  _change) const {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
 	};
-	strinx filter(std::string _find, int  _change) {
+	strinx filter(const char* _find, int  _change) const {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
 	};
-	strinx filter(std::string _find, float _change) {
-		strinx c = *this;
-		while (c.replace(_find, _change));
-		return c;
-	};
-
-	strinx filter(strinx _find, char  _change) {
-		strinx c = *this;
-		while (c.replace(_find, _change));
-		return c;
-	};
-	strinx filter(strinx _find, const char* _change) {
-		strinx c = *this;
-		while (c.replace(_find, _change));
-		return c;
-	};
-	strinx filter(strinx _find, std::string _change) {
-		strinx c = *this;
-		while (c.replace(_find, _change));
-		return c;
-	};
-	strinx filter(strinx _find, strinx  _change) {
-		strinx c = *this;
-		while (c.replace(_find, _change));
-		return c;
-	};
-	strinx filter(strinx _find, int  _change) {
-		strinx c = *this;
-		while (c.replace(_find, _change));
-		return c;
-	};
-	strinx filter(strinx _find, float _change) {
+	strinx filter(const char* _find, float _change) const {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
 	};
 
-	strinx filter(int _find, char  _change) {
+	strinx filter(std::string _find, char  _change) const {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
 	};
-	strinx filter(int _find, const char* _change) {
+	strinx filter(std::string _find, const char*  _change) const {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
 	};
-	strinx filter(int _find, std::string _change) {
+	strinx filter(std::string _find, std::string _change) const {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
 	};
-	strinx filter(int _find, strinx  _change) {
+	strinx filter(std::string _find, strinx  _change) const {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
 	};
-	strinx filter(int _find, int  _change) {
+	strinx filter(std::string _find, int  _change) const {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
 	};
-	strinx filter(int _find, float _change) {
+	strinx filter(std::string _find, float _change) const {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
 	};
 
-	strinx filter(float _find, char  _change) {
+	strinx filter(strinx _find, char  _change) const {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
 	};
-	strinx filter(float _find, const char* _change) {
+	strinx filter(strinx _find, const char* _change) const {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
 	};
-	strinx filter(float _find, std::string _change) {
+	strinx filter(strinx _find, std::string _change) const {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
 	};
-	strinx filter(float _find, strinx  _change) {
+	strinx filter(strinx _find, strinx  _change) const {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
 	};
-	strinx filter(float _find, int  _change) {
+	strinx filter(strinx _find, int  _change) const {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
 	};
-	strinx filter(float _find, float _change) {
+	strinx filter(strinx _find, float _change) const {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+
+	strinx filter(int _find, char  _change) const {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+	strinx filter(int _find, const char* _change) const {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+	strinx filter(int _find, std::string _change) const {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+	strinx filter(int _find, strinx  _change) const {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+	strinx filter(int _find, int  _change) const {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+	strinx filter(int _find, float _change) const {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+
+	strinx filter(float _find, char  _change) const {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+	strinx filter(float _find, const char* _change) const {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+	strinx filter(float _find, std::string _change) const {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+	strinx filter(float _find, strinx  _change) const {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+	strinx filter(float _find, int  _change) const {
+		strinx c = *this;
+		while (c.replace(_find, _change));
+		return c;
+	};
+	strinx filter(float _find, float _change) const {
 		strinx c = *this;
 		while (c.replace(_find, _change));
 		return c;
@@ -1361,7 +1361,7 @@ public:
 	void erase(int v) { while (takeout(v)); };
 	void erase(float v) { while (takeout(v)); };
 
-	bool check(char v) {
+	bool check(char v) const {
 		for (size_t i = 0; i < _size; i++) {
 			if (v == _str[i]) {
 				return true;
@@ -1369,14 +1369,14 @@ public:
 		};
 		return false;
 	};
-	bool check(const char* v) {
+	bool check(const char* v) const {
 		 size_t s = _size - strlen(v), sl = strlen(v);
 		 for (size_t i = 0; i < s; i++)
 			 if (this->operator()(i, i + sl) == v)
 				 return true;
 		return false;
 	};
-	bool check(std::string v) {
+	bool check(std::string v) const {
 		strinx _v = v;
 		const size_t s = _size - v.size(), sl = v.size();
 		for (size_t i = 0; i < s; i++) {
@@ -1385,7 +1385,7 @@ public:
 		}
 		return false;
 	};
-	bool check(strinx v) {
+	bool check(strinx v) const {
 		const size_t s = _size - v.size(), sl = v.size();
 		for (size_t i = 0; i < s; i++) {
 			if (v == this->operator()(i, i + sl))
@@ -1393,7 +1393,7 @@ public:
 		}
 		return false;
 	};
-	bool check(int v) {
+	bool check(int v) const {
 		strinx _v = v;
 		const size_t s = _size - _v.size(), sl = _v.size();
 		for (size_t i = 0; i < s; i++) {
@@ -1402,7 +1402,7 @@ public:
 		}
 		return false;
 	};
-	bool check(float v) {
+	bool check(float v) const {
 		strinx _v = v;
 		const size_t s = _size - _v.size(), sl = _v.size();
 		for (size_t i = 0; i < s; i++) {
@@ -1429,14 +1429,14 @@ public:
 			return false;
 	};
 
-	size_t index(char v) {
+	size_t index(char v) const {
 		size_t _c = 0;
 		for (size_t i = 0; i < _size; i++)
 			if (v == _str[i])
 				_c++;
 		return _c;
 	};
-	size_t index(const char* v) {
+	size_t index(const char* v) const {
 		size_t _c = 0;
 		strinx _v = v;
 		const size_t s = _size - strlen(v), sl = strlen(v);
@@ -1445,7 +1445,7 @@ public:
 				_c++;
 		return _c;
 	};
-	size_t index(std::string v) {
+	size_t index(std::string v) const {
 		size_t _c = 0;
 		strinx _v = v;
 		const size_t s = _size - v.size(), sl = v.size();
@@ -1454,7 +1454,7 @@ public:
 				_c++;
 		return _c;
 	};
-	size_t index(strinx v) {
+	size_t index(strinx v) const {
 		size_t _c = 0;
 		const size_t s = _size - v.size(), sl = v.size();
 		for (size_t i = 0; i < s; i++)
@@ -1462,7 +1462,7 @@ public:
 				_c++;
 		return _c;
 	};
-	size_t index(int v) {
+	size_t index(int v) const {
 		size_t _c = 0;
 		strinx _v = v;
 		const size_t s = _size - _v.size(), sl = _v.size();
@@ -1471,7 +1471,7 @@ public:
 				_c++;
 		return _c;
 	};
-	size_t index(float v) {
+	size_t index(float v) const {
 		size_t _c = 0;
 		strinx _v = v;
 		const size_t s = _size - _v.size(), sl = _v.size();
@@ -1481,7 +1481,7 @@ public:
 		return _c;
 	};
 
-	size_t find(char v) {
+	size_t find(char v) const {
 		size_t _c = _size;
 		for (size_t i = 0; i < _size; i++) {
 			if (v == _str[i]) {
@@ -1491,7 +1491,7 @@ public:
 		};
 		return _c;
 	};
-	size_t find(const char* v) {
+	size_t find(const char* v) const {
 		size_t _c = _size;
 		const size_t s = _size - strlen(v), sl = strlen(v);
 		for (size_t i = 0; i < s; i++) {
@@ -1502,7 +1502,7 @@ public:
 		}
 		return _c;
 	};
-	size_t find(std::string v) {
+	size_t find(std::string v) const {
 		size_t _c = _size;
 		const size_t s = _size - v.size(), sl = v.size();
 		for (size_t i = 0; i < s; i++) {
@@ -1513,7 +1513,7 @@ public:
 		}
 		return _c;
 	};
-	size_t find(strinx v) {
+	size_t find(strinx v) const {
 		size_t _c = _size;
 		const size_t s = _size - v.size(), sl = v.size();
 		for (size_t i = 0; i < s; i++) {
@@ -1524,7 +1524,7 @@ public:
 		}
 		return _c;
 	};
-	size_t find(int v) {
+	size_t find(int v) const {
 		size_t _c = _size;
 		strinx _v = v;
 		const size_t s = _size - _v.size(), sl = _v.size();
@@ -1536,7 +1536,7 @@ public:
 		}
 		return _c;
 	};
-	size_t find(float v) {
+	size_t find(float v) const {
 		size_t _c = _size;
 		strinx _v = v;
 		const size_t s = _size - _v.size(), sl = _v.size();
@@ -1743,8 +1743,7 @@ typedef strinx stx;
 strinx operator""stx(const char* v, size_t) { return strinx(v); };
 strinx operator""stx(unsigned long long v) { return strinx(int(v)); };
 std::ostream& operator<<(std::ostream& os, const strinx& v) {
-	strinx _v = v;
-	os << _v.c_str();
+	os << v.c_str();
 	return os;
 };
 std::vector<strinx> operator""split(const char* v, size_t) {
