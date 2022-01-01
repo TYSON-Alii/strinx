@@ -4,6 +4,7 @@
 #include <vector>
 
 #define _XS_STRINX_
+
 class strinx : public std::string {
 public:
     strinx() = default;
@@ -140,8 +141,8 @@ public:
         return t;
     };
     strinx& swap(int index1, int index2) {
-        index1 = (index1 < 0) ? (size() - index1) : index1;
-        index2 = (index2 < 0) ? (size() - index2) : index2;
+        index1 = (index1 < 0) ? (int(size()) - index1) : index1;
+        index2 = (index2 < 0) ? (int(size()) - index2) : index2;
         const auto& i1 = begin() + index1;
         const auto& i2 = begin() + index2;
         std::swap(*i1, *i2);
@@ -149,12 +150,30 @@ public:
     };
     strinx swap(int index1, int index2) const {
         strinx t(*this);
-        index1 = (index1 < 0) ? (size() - index1) : index1;
-        index2 = (index2 < 0) ? (size() - index2) : index2;
+        index1 = (index1 < 0) ? (int(size()) - index1) : index1;
+        index2 = (index2 < 0) ? (int(size()) - index2) : index2;
         const auto& i1 = t.begin() + index1;
         const auto& i2 = t.begin() + index2;
         std::swap(*i1, *i2);
         return t;
+    };
+    strinx random() const {
+        strinx temp;
+        size_t p;
+        std::vector<size_t> ss;
+        const int& _size = int(size());
+        for (size_t i = 0; i < size(); i++) {
+            p = rand() % _size;
+        _r:;
+            for (const auto& j : ss)
+                if (j == p) {
+                    p = rand() % _size;
+                    goto _r;
+                };
+            ss.push_back(p);
+            temp += data()[p];
+        }
+        return temp;
     };
 };
 typedef strinx stx;
