@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-using namespace std;
+
 class strinx : public std::string {
 public:
     using std::string::string;
@@ -210,6 +210,16 @@ public:
             return false;
         };
         return false;
+    };
+    strinx upper() const {
+        strinx t;
+        for (const auto i : *this) t += (i > 96 and i < 123) ? char(i - ' ') : char(i);
+        return t;
+    };
+    strinx lower() const {
+        strinx t;
+        for (const auto i : *this) t += (i > 64 and i < 91) ? char(i + ' ') : char(i);
+        return t;
     };
 };
 typedef strinx stx;
