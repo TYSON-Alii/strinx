@@ -1,4 +1,3 @@
-#define _CRT_SECURE_NO_WARNINGS
 #include <utility>
 #include <iostream>
 #include <string>
@@ -42,7 +41,7 @@ public:
         strinx t;
         t += "{ ";
         for (const T& i : v) {
-            t += std::to_string(i);
+            t += strinx(i);
             t += ", ";
         };
         t.pop_back();
@@ -54,7 +53,7 @@ public:
         strinx t;
         t += "{ ";
         for (const T& i : v) {
-            t += std::to_string(i);
+            t += strinx(i);
             t += ", ";
         };
         t.pop_back();
@@ -62,15 +61,18 @@ public:
         t += " }";
         *this = t;
     };
+    inline auto operator*() const { return data(); };
+    inline auto operator*() { return data(); };
     strinx operator[](std::initializer_list<int> v) const {
         strinx t;
         for (const auto& i : v) t += (*this)[i];
         return t;
     };
-    strinx operator+(strinx v) const { return strcat(_strdup(data()), v.c_str()); };
-    strinx operator+(auto v) const { return *this + (strinx)v; };
-    strinx& operator+=(strinx v) { *this += v.c_str(); return *this; };
-    strinx& operator+=(auto v) { *this += (strinx)v; return *this; };
+    inline strinx operator+(strinx v) const { return strcat(_strdup(data()), v.c_str()); };
+    inline strinx operator+(const auto& v) const { return *this + (strinx)v; };
+    inline strinx& operator+=(strinx v) { *this += v.c_str(); return *this; };
+    inline strinx& operator+=(const auto& v) { *this += (strinx)v; return *this; };
+    inline strinx& operator<<(const auto& v) { return (*this) += (strinx)v; };
     inline operator bool() const { return !empty(); };
     inline bool operator!() const { return empty(); };
     template <std::integral T> requires(!std::same_as<T, char>) inline operator T() const { return std::stoi(*this); };
@@ -137,7 +139,7 @@ public:
             *this += c;
         return *this;
     };
-    inline void print() const { std::cout << c_str() << '\n'; };
+    inline auto& print() const { std::cout << c_str() << '\n'; return std::cout; };
     strinx first() const { return strinx(data()[0]); };
     strinx last() const { return strinx((*this)[size() - 1u]); };
     strinx& reverse() {
