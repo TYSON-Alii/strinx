@@ -3,7 +3,7 @@
 ```cpp
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
-#include "Strinx.hpp"
+#include "strinx.hpp"
 
 using namespace std;
 
