@@ -19,7 +19,7 @@ auto main() -> int {
     yazi.lower();
     yazi.random();
     yazi.reverse();
-    yazi.starts_with('!');
+    yazi.starts_with("!");
     yazi.takeout("w");
     yazi.upper();
     yazi.pop();
@@ -27,5 +27,8 @@ auto main() -> int {
     yazi.in('a');
     yazi.is_lower();
     yazi.is_upper();
+    cout << ", "_stx.join({ 1,2,3,4 }) << '\n';
+    std::vector<int> l = { 1,2,3,4 };
+    cout << " - "_stx.join(l, l.rbegin(), l.rend()) << '\n';
     return 0;
 };
