@@ -63,8 +63,8 @@ public:
         }
         else return *this;
     };
-    inline stx operator+(const auto& v) const { return str::operator+((stx)v); };
-    inline stx& operator+=(const auto& v) { str::operator+=((stx)v); return (*this); };
+    inline stx operator+(const auto& v) const { return str::operator+(stx(v)); };
+    inline stx& operator+=(const auto& v) { str::operator+=(stx(v)); return (*this); };
     inline stx operator-(const auto& v) const { return takeout((stx)v); };
     inline stx& operator-=(const auto& v) { takeout((stx)v); return (*this); };
     inline stx& push(const auto& v) { push_back((stx)v); return *this; };
@@ -175,6 +175,39 @@ public:
         return t;
     };
     stx reverse() const { return stx(rbegin(), rend()); };
+    template <typename T> stx join(const std::initializer_list<T>& l) const {
+        stx temp;
+        if (l.size() != 0) {
+            const auto& sep = *this;
+            auto it = l.begin();
+            const auto& end = l.end();
+            temp += (stx)(*it);
+            it++;
+            while (it != end) {
+                temp += sep;
+                temp += *it;
+                it++;
+            }
+        }
+        return temp;
+    };
+    template <typename T> stx join(const T& l, auto it_beg, auto it_end) const {
+        stx temp;
+        if (l.size() != 0) {
+            const auto& sep = *this;
+            auto it = it_beg;
+            const auto& end = it_end;
+            temp += (stx)(*it);
+            it++;
+            while (it != end) {
+                temp += sep;
+                temp += *it;
+                it++;
+            }
+        }
+        return temp;
+    };
+    template <typename T> inline stx join(const T& l) const { return join(l, l.begin(), l.end()); };
     inline bool in(const auto& is_in_) const {
         const stx& is_in = (stx)is_in_;
         if (is_in.empty() or empty() or is_in.size() > size())
